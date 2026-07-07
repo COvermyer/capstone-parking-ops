@@ -1,0 +1,21 @@
+import { Router } from 'express';
+import * as stateCodeController from './state-code.controller';
+
+const router = Router();
+router
+    .route('/state-codes')
+    .get(stateCodeController.getAllStateCodes);
+
+router
+    .route('/state-codes/id/:state_id')
+    .get(stateCodeController.getStateCodeByStateId);
+
+router
+    .route('/state-codes/name/:state_name')
+    .get(stateCodeController.getStateCodeByStateName);
+
+router
+    .route('/state-codes/abbreviation/:state_abbreviation')
+    .get(stateCodeController.getStateCodeByStateAbbreviation);
+
+export default router;

@@ -1,0 +1,32 @@
+{
+  "name": "capstone-parking-ops-api",
+  "version": "1.0.0",
+  "description": "API for Capstone Parking Operations",
+  "license": "ISC",
+  "author": "Caleb Overmyer",
+  "type": "commonjs",
+  "main": "app.ts",
+  "scripts": {
+    "start:watch": "nodemon ./src/app.ts",
+    "start": "npx ts-node ./src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "mysql": "^2.18.1",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.6",
+    "@types/mysql": "^2.15.27",
+    "@types/nodemon": "^1.19.6",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
