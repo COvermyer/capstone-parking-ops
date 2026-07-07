@@ -1,0 +1,25 @@
+import { Request, RequestHandler, Response } from "express";
+import * as citationStatusCodeService from './citation-status-code.service';
+
+export const getCitationStatusCodes: RequestHandler = async (req: Request, res: Response) => {
+    try {
+        const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodes();
+        console.log('[citation-status-code.controller][getCitationStatusCodes][Success]: ', citationStatusCodes);
+        res.status(200).json(citationStatusCodes)
+    } catch (error) {
+        console.log('[citation-status-code.controller][getCitationStatusCodes][Error]: ', error);
+        res.status(500).json({ error: 'Failed to fetch citation offense codes' });
+    }
+};
+
+export const getCitationStatusCodeById: RequestHandler = async (req: Request, res: Response) => {
+    const status_code = parseInt(req.params.status_code as string, 10);
+    try {
+        const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodeById(status_code);
+        console.log('[citation-status-code.controller][getCitationStatusCodeById][Success]: ', citationStatusCodes[0]);
+        res.status(200).json(citationStatusCodes[0])
+    } catch (error) {
+        console.log('[citation-status-code.controller][getCitationStatusCodeById][Error]: ', error);
+        res.status(500).json({ error: 'Failed to fetch citation offense codes' });
+    }
+};
