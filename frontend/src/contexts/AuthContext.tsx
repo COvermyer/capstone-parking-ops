@@ -5,6 +5,7 @@ import authService from '../services/auth.service';
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
+    isLoading: boolean;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
 }
@@ -20,10 +21,15 @@ export function AuthProvider({
 }) {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setAuthenticated] = useState(false);
+    const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = authService.getToken();
-        if (token) { setAuthenticated(true) }
+        if (token) { 
+            setAuthenticated(true);
+        }
+        setLoading(false);
+
     }, []);
 
     const login = async (
@@ -45,6 +51,7 @@ export function AuthProvider({
             value={{
                 user,
                 isAuthenticated,
+                isLoading,
                 login,
                 logout
             } as AuthContextType}

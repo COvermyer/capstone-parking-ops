@@ -12,6 +12,7 @@ const login = async (
 ): Promise<LoginResponse> => {
 
     const response = await api.post<LoginResponse>('/auth/login', credentials);
+    console.log('API response: ', response.data); // TODO: Testing only, remove me
 
     localStorage.setItem('token', response.data.token);
 

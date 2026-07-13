@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import authService from '../services/auth.service';
-
-import userService from '../services/user.service';
 import { useAuth } from '../contexts/AuthContext';
 
 /**
@@ -9,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
  * TODO: Redesign so that the page is containable within a stylization element
  * @returns JSX containing the login form
  */
-function Login() {
+const Login = () => {
     const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -26,7 +23,7 @@ function Login() {
         
         setLoading(true);
         try {
-            const response = await login(username, password);
+            await login(username, password);
             console.log("Log in successful");
 
         } catch (err) {
