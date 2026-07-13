@@ -1,10 +1,12 @@
 import bcrypt from 'bcrypt';
 import * as userCredentialService from '../user-credentials/user-credential.service';
+import * as userService from '../users/user.service'
 import * as jwtService from "../../services/jwt.service";
 import { AuthenticatedUser } from '../../types/authenticated-user';
 
 export const login = async (username: string, password: string) => {
     const credential = (await userCredentialService.getUserCredentialByUsername(username))[0];
+    
 
     if (!credential)
         throw new Error("Invalid username or password");
@@ -15,22 +17,22 @@ export const login = async (username: string, password: string) => {
     if (!validPassword)
         throw new Error("Invalid username or password");
 
-    const authenticatedUser = {
+    const user = (await userService.getUserByUsername(username))[0];
+    const authenticatedUser: AuthenticatedUser = {
         user_id: credential.user_id,
+        company_id: user.company_id,
         username: credential.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        roles: user.roles,
+        email: user.email
     }
     
     // generate JWT token
-    const token = jwtService.generateToken(authenticatedUser as AuthenticatedUser);
+    const token = jwtService.generateToken(authenticatedUser);
 
-    return({ token });
+    return({ 
+        token,
+        user: authenticatedUser
+    });
 }
-
-
-// async login(
-//         username: string,
-//         password: string
-//     ) {
-        
-//     }
-// export default AuthService;

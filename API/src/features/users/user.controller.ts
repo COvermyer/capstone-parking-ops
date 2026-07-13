@@ -29,3 +29,20 @@ export const getUserById: RequestHandler = async (req: Request, res: Response) =
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+export const getUserByUsername: RequestHandler = async (req: Request, res: Response) => {
+    const username = req.params.username as string;
+    try {
+        const user: User[] = await userService.getUserByUsername(username);
+        if (user.length === 0) {
+            console.log('[user.controller][getUserByUsername][Not Found] No user found with username: ', username);
+            res.status(404).json({ error: 'Username not found' });
+        } else {
+            console.log('[user.controller][getUserByUsername][Success] Fetched user:', user[0]);
+            res.status(200).json(user[0]);
+        }
+    } catch (error) {
+        console.error('[user.controller][getUserByUsername][Error] Error fetching user: ', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}

@@ -5,7 +5,7 @@ import { requireAuthentication } from '../../middleware/request-auth.middleware'
 const router = Router();
 router.get(
     '/users',
-    requireAuthentication,
+    // requireAuthentication,
     userController.getAllUsers
 );
 

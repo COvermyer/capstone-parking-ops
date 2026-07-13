@@ -25,7 +25,21 @@ export const getUserById = async (user_id: number): Promise<User[]> => {
         let assignments = await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user.user_id);
         (user as User).roles = assignments.map((assignment) => 
             assignment.role_id).map((role_id) => lookupService.getRole(role_id) as string
-    );
+        );
+    }
+
+    return users;
+}
+
+export const getUserByUsername = async (username: string): Promise<User[]> => {
+    const users = await userDAO.readUserByUsername(username);
+
+    // Role logic
+    for (const user of users) {
+        let assignments = await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user.user_id);
+        (user as User).roles = assignments.map((assignment) =>
+            assignment.role_id).map((role_id) => lookupService.getRole(role_id) as string
+        );
     }
 
     return users;

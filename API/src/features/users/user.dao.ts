@@ -40,3 +40,7 @@ export const readUsers = async () => {
 export const readUserById = async (user_id: number) => {
     return execute<User[]>(userQueries.getUserById, [user_id]);
 }
+
+export const readUserByUsername = async (username: string) => {
+    return execute<User[]>(userQueries.getUserByUsername, [username]);
+}
