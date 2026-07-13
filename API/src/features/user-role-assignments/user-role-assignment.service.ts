@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user-role-assignment.service.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import * as userRoleAssignmentDao from './user-role-assignment.dao';
 
 export const getUserRoleAssignments = async () => {

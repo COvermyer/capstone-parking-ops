@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: color-code.service.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import * as colorCodeDAO from './color-code.dao';
 
 export const getColorCodes = async () => {

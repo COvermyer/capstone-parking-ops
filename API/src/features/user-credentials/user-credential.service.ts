@@ -1,5 +1,11 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user-role-credential.service.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import * as userCredentialDao from './user-credential.dao';
-import { AuthenticatedUser } from '../../types/authenticated-user';
+import { AuthenticatedUser } from '../auth/authenticated-user';
 
 export const getUserCredentials = async (authenticatedUser: AuthenticatedUser) => {
     return userCredentialDao.readUserCredentials();

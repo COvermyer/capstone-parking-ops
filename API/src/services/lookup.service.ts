@@ -1,8 +1,8 @@
 /**
  * Author: Caleb Overmyer
  * Filename: lookup.service.ts
- * Created: 2024-06-10
- * Last Modified: 2024-06-10
+ * Created: 2024-07-10
+ * Last Modified: 2024-07-10
  * 
  * Description: 
  * This file contains the LookupService class, which is responsible for managing static lookup tables in memory.
@@ -20,6 +20,9 @@ import * as citationOffenseCodeService from '../features/citation-offense-codes/
 import { CitationOffenseCode } from '../features/citation-offense-codes/citation-offense-code.model';
 import * as citationStatusCodeService from '../features/citation-status-codes/citation-status-code.service';
 
+/**
+ * Acts as a registry of all lookup tables to eliminate repeated database queries/excessive pool usage for static data
+ */
 class LookupService {
     // Static lookup tables stored in memory
     public userRoles: Map<number, string> = new Map<number, string>();

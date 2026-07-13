@@ -1,6 +1,15 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: mysql.connector.ts
+ * Created: 07/06/2026
+ * Last Updated: 07/06/2026
+ */
 import { createPool, Pool } from 'mysql';
 let pool: Pool | null = null;
 
+/**
+ * Initializes a pool of mySql connections for use by the API
+ */
 const initializeMySqlConnector = () => {
     try {
         pool = createPool({
@@ -33,6 +42,12 @@ const initializeMySqlConnector = () => {
     }
 };
 
+/**
+ * Executes a query or command in the database
+ * @param query The query string to be run against the database
+ * @param params an array of values to format into the query string as parameters
+ * @returns a Promise of type T that is the result of the SQL operation
+ */
 export const execute = <T>(query: string, params: string[] | Object): Promise<T> => {
     try {
         if (!pool) {

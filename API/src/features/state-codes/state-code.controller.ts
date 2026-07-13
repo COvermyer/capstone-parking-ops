@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: state-code.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from 'express';
 import * as stateCodeService from './state-code.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getAllStateCodes: RequestHandler = async (req: Request, res: Response) => {
     try {
         const stateCodes = await stateCodeService.getAllStateCodes();
@@ -12,6 +23,11 @@ export const getAllStateCodes: RequestHandler = async (req: Request, res: Respon
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getStateCodeByStateId: RequestHandler = async (req: Request, res: Response) => {
     const state_id = parseInt(req.params.state_id as string, 10);
     try {

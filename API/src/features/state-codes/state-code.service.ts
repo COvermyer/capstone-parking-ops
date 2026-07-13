@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: state-code.service.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import * as stateCodeDAO from './state-code.dao';
 
 export const getAllStateCodes = async () => {

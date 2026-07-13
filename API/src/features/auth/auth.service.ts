@@ -1,8 +1,14 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: auth.service.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import bcrypt from 'bcrypt';
 import * as userCredentialService from '../user-credentials/user-credential.service';
 import * as userService from '../users/user.service'
 import * as jwtService from "../../services/jwt.service";
-import { AuthenticatedUser } from '../../types/authenticated-user';
+import { AuthenticatedUser } from './authenticated-user';
 
 export const login = async (username: string, password: string) => {
     const credential = (await userCredentialService.getUserCredentialByUsername(username))[0];

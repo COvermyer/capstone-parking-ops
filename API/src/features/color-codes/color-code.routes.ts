@@ -1,6 +1,15 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: color-code.routes.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Router } from 'express';
 import * as colorCodeController from './color-code.controller';
 
+/**
+ * Defines a router and assigns the HTTP methods associated with the data concern
+ */
 const router = Router();
 router
     .route('/color-codes')

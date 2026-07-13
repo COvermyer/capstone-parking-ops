@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user-role-assignment.dao.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { execute } from '../../services/mysql.connector';
 import { UserRoleAssignment } from './user-role-assignment.model';
 import { userRoleAssignmentQueries } from './user-role-assignment.queries';

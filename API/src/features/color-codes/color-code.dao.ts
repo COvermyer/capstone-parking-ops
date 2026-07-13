@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: color-code.dao.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { execute } from '../../services/mysql.connector';
 import { ColorCode } from './color-code.model';
 import { colorCodeQueries } from './color-code.queries';

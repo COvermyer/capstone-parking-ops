@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: app.ts
+ * Created: 07/06/2026
+ * Last Updated: 07/13/2026
+ */
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import "dotenv/config";

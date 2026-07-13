@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user-role-assignment.dao.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from 'express';
 import * as userRoleAssignmentService from './user-role-assignment.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getUserRoleAssignments: RequestHandler = async (req: Request, res: Response) => {
     try {
         const userRoleAssignments = await userRoleAssignmentService.getUserRoleAssignments();
@@ -12,6 +23,11 @@ export const getUserRoleAssignments: RequestHandler = async (req: Request, res: 
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getUserRoleAssignmentsByUserId: RequestHandler = async (req: Request, res: Response) => {
     const user_id = parseInt(req.params.user_id as string, 10);
     try {
@@ -24,6 +40,11 @@ export const getUserRoleAssignmentsByUserId: RequestHandler = async (req: Reques
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getUserRoleAssignmentsByRoleId: RequestHandler = async (req: Request, res: Response) => {
     const role_id = parseInt(req.params.role_id as string, 10);
     try {

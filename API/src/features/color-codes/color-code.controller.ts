@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: color-code.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from 'express';
 import * as colorCodeService from './color-code.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getColorCodes: RequestHandler = async (req: Request, res: Response) => {
     try {
         const colorCodes = await colorCodeService.getColorCodes();
@@ -12,6 +23,11 @@ export const getColorCodes: RequestHandler = async (req: Request, res: Response)
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getColorCodeById: RequestHandler = async (req: Request, res: Response) => {
     const color_id = parseInt(req.params.color_id as string, 10);
     try {
@@ -24,6 +40,11 @@ export const getColorCodeById: RequestHandler = async (req: Request, res: Respon
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getColorCodeByName: RequestHandler = async (req: Request, res: Response) => {
     const color_name = req.params.color_name as string;
     try {

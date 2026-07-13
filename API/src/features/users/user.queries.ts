@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user.queries.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 export const userQueries = {
     getAllUsers: 'SELECT * FROM users',
     getUserById: 'SELECT * FROM users WHERE user_id = ?',

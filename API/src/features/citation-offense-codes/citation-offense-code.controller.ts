@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: citation-offense-code.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from "express";
 import * as offenseStatusCodeService from './citation-offense-code.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getCitationOffenseCodes: RequestHandler = async (req: Request, res: Response) => {
     try {
         const offenseStatusCodes = await offenseStatusCodeService.getCitationOffenseCodes();
@@ -12,6 +23,11 @@ export const getCitationOffenseCodes: RequestHandler = async (req: Request, res:
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getCitationOffenseCodeById: RequestHandler = async (req: Request, res: Response) => {
     const offense_code_id = parseInt(req.params.offense_code_id as string, 10);
     try {

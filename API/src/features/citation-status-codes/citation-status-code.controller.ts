@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: citation-status-code.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from "express";
 import * as citationStatusCodeService from './citation-status-code.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getCitationStatusCodes: RequestHandler = async (req: Request, res: Response) => {
     try {
         const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodes();
@@ -12,6 +23,11 @@ export const getCitationStatusCodes: RequestHandler = async (req: Request, res: 
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getCitationStatusCodeById: RequestHandler = async (req: Request, res: Response) => {
     const status_code = parseInt(req.params.status_code as string, 10);
     try {

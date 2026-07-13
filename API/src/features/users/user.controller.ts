@@ -1,7 +1,18 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: user.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from 'express';
 import * as userService from './user.service';
 import { User } from './user.model';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getAllUsers: RequestHandler = async (req: Request, res: Response) => {
     try {
         const users: User[] = await userService.getAllUsers();
@@ -13,6 +24,11 @@ export const getAllUsers: RequestHandler = async (req: Request, res: Response) =
     }
 }
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getUserById: RequestHandler = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.user_id as string, 10);
     try {
@@ -30,6 +46,11 @@ export const getUserById: RequestHandler = async (req: Request, res: Response) =
     }
 }
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getUserByUsername: RequestHandler = async (req: Request, res: Response) => {
     const username = req.params.username as string;
     try {

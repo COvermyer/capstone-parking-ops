@@ -1,6 +1,17 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: appeal-status-code.controller.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { Request, RequestHandler, Response } from 'express';
 import * as appealStatusCodeService from './appeal-status-code.service';
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getAppealStatusCodes: RequestHandler = async (req: Request, res: Response) => {
     try {
         const appealStatusCodes = await appealStatusCodeService.getAppealStatusCodes();
@@ -12,6 +23,11 @@ export const getAppealStatusCodes: RequestHandler = async (req: Request, res: Re
     }
 };
 
+/**
+ * Controller Method to format response body from Service data
+ * @param req Request Body
+ * @param res Response Body
+ */
 export const getAppealStatusCodeById: RequestHandler = async (req: Request, res: Response) => {
     const appeal_status_code = parseInt(req.params.appeal_status_code as string, 10);
     try {

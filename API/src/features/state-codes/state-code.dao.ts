@@ -1,3 +1,9 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: state-code.dao.ts
+ * Created: 07/10/2026
+ * Last Updated: 07/10/2026
+ */
 import { execute } from '../../services/mysql.connector';
 import { StateCode } from './state-code.model';
 import { stateCodeQueries } from './state-code.queries';
