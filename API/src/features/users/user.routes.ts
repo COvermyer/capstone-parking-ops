@@ -1,10 +1,13 @@
 import { Router } from 'express';
 import * as userController from './user.controller';
+import { requireAuthentication } from '../../middleware/request-auth.middleware';
 
 const router = Router();
-router
-    .route('/users')
-    .get(userController.getAllUsers);
+router.get(
+    '/users',
+    requireAuthentication,
+    userController.getAllUsers
+);
 
 router
     .route('/users/:user_id')

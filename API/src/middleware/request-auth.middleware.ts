@@ -4,10 +4,11 @@
  * a 403 Unauthorized error is thrown. 
  */
 import { Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
+import * as jwtService from '../services/jwt.service';
 
 import { AuthenticatedRequest } from '../types/authenticated-request';
-import { AuthenticatedUser } from '../types/authenticated-user';
+// import { AuthenticatedUser } from '../types/authenticated-user';
 
 function getBearerToken (authHeader? : string): string | null {
     if(!authHeader) 
@@ -21,33 +22,29 @@ function getBearerToken (authHeader? : string): string | null {
     return token; // return only the token value
 } 
 
-export const authenticatedRequest = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-
-    // missing header
-    if (!authHeader) {
-        return res.status(401).json({ message: 'Authorization Header Missing' });
-    }
-
-    // Should Be: `Bearer <token>`
-    const parts = authHeader.split(" ");
-
-    // ensure that the expected format is received
-    if (parts.length !== 2 || parts[0] !== "Bearer") {
-        return res.status(401).json({ message: 'Invalid authorization header' });
-    }
-
-    const token = getBearerToken(authHeader);
+export const requireAuthentication = (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    const token = getBearerToken(req.headers.authorization);
 
     if (!token) {
-        res.status(401).json({ message: "Unauthorized or Invalid Token" });
+        // no token was attached to the request header
+        return res.status(401).json({ 
+            message: 'Missing or invalid Authorization header.' 
+        });
     }
 
-    const decoded = jwt.verify(
-        token as string,
-        process.env.JWT_SECRET!
-    );
+    try {
+        const authenticatedUser = jwtService.verifyToken(token); // verify the token
+        req.user = authenticatedUser; // attach the authenticated user to the request body
+        next(); // continue past the middleware 
 
-    req.user = decoded as AuthenticatedUser;
-    next();
-}
+    } catch (error) {
+        // Unable to validate token due to expiration or invalidity
+        return res.status(401).json({
+            message: 'Invalid or expired token.'
+        })
+    }
+};
