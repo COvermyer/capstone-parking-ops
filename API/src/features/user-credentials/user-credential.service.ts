@@ -1,6 +1,7 @@
 import * as userCredentialDao from './user-credential.dao';
+import { AuthenticatedUser } from '../../types/authenticated-user';
 
-export const getUserCredentials = async () => {
+export const getUserCredentials = async (authenticatedUser: AuthenticatedUser) => {
     return userCredentialDao.readUserCredentials();
 }
 

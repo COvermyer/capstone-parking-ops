@@ -1,14 +1,18 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import "dotenv/config";
 import cors from 'cors';
 import helmet from 'helmet';
 import logger from './middleware/logger.middleware';
+// import { AuthenticatedRequest } from './types/authenticated-request';
 import lookupService from './services/lookup.service';
 import userRoutes from './features/users/user.routes';
 import userRoleCodeRoutes from './features/user-role-codes/user-role-codes.routes';
 import stateCodeRoutes from './features/state-codes/state-code.routes';
 import appealStatusCodeRoutes from './features/appeal-status-codes/appeal-status-code.routes';
 import colorCodeRoutes from './features/color-codes/color-code.routes';
+import authRoutes from './features/auth/auth.routes';
+// import { authenticatedRequest } from './middleware/request-auth.middleware';
 
 dotenv.config({ quiet: true }); // Load environment variables from .env file
 const app = express();
@@ -23,21 +27,23 @@ app.use(cors());
 // Helmet security middleware
 app.use(helmet());
 
-let routes = [
-    userRoutes, 
-    userRoleCodeRoutes, 
-    stateCodeRoutes,
-    appealStatusCodeRoutes,
-    colorCodeRoutes,
-]; 
-
 // Add routers
-app.use('/api', routes); 
+app.use('/api', userRoutes);
+app.use('/api', userRoleCodeRoutes);
+app.use('/api', stateCodeRoutes);
+app.use('/api', appealStatusCodeRoutes);
+app.use('/api', colorCodeRoutes);
+app.use('/auth', authRoutes);
 
-// Define a simple route
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, World!');
+app.get('/health', (req, res) => {
+    res.json({
+        status: "OK",
+        timestamp: new Date()
+    });
 });
+
+// import * as hash from './generate-pass';
+// hash.generateHash();
 
 /**
  * Server start function that initializes the lookup service and starts the Express server.
