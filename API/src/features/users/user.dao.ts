@@ -26,7 +26,7 @@ import { userQueries } from './user.queries';
  */
 export const readUsers = async () => {
     return execute<User[]>(userQueries.getAllUsers, []);
-}
+};
 
 /**
  * 
@@ -39,8 +39,16 @@ export const readUsers = async () => {
  */
 export const readUserById = async (user_id: number) => {
     return execute<User[]>(userQueries.getUserById, [user_id]);
-}
+};
 
 export const readUserByUsername = async (username: string) => {
     return execute<User[]>(userQueries.getUserByUsername, [username]);
-}
+};
+
+export const createUser = async (user: User) => {
+    return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
+};
+
+export const updateUser = async (user: User) => {
+    return execute<OkPacket>(userQueries.updateUser, []);
+};

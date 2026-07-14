@@ -8,6 +8,8 @@ import * as userDAO from './user.dao';
 import * as userRoleAssignmentDAO from '../user-role-assignments/user-role-assignment.dao';
 import { User } from './user.model';
 import lookupService from '../../services/lookup.service';
+import { OkPacket } from 'mysql';
+
 
 /**
  * Get all method for Users
@@ -32,8 +34,8 @@ export const getAllUsers = async (): Promise<User[]> => {
  * @param user_id The user_id of the requested User
  * @returns a Promise for User array
  */
-export const getUserById = async (user_id: number): Promise<User[]> => {
-    const users = await userDAO.readUserById(user_id);
+export const getUserById = async (user_id: number): Promise<User> => {
+    const users: User[] = await userDAO.readUserById(user_id);
 
     // Role logic
     for (const user of users) {
@@ -43,7 +45,7 @@ export const getUserById = async (user_id: number): Promise<User[]> => {
         );
     }
 
-    return users;
+    return users[0];
 }
 
 /**
@@ -51,7 +53,7 @@ export const getUserById = async (user_id: number): Promise<User[]> => {
  * @param username The username associated with the requested user
  * @returns a Promise for User array
  */
-export const getUserByUsername = async (username: string): Promise<User[]> => {
+export const getUserByUsername = async (username: string): Promise<User> => {
     const users = await userDAO.readUserByUsername(username);
 
     // Role logic
@@ -62,5 +64,17 @@ export const getUserByUsername = async (username: string): Promise<User[]> => {
         );
     }
 
-    return users;
+    return users[0];
 }
+
+export const createUser = async (user: User) : Promise<OkPacket> => {
+    const okPacket = await userDAO.createUser(user);
+    // TODO: Role logic?
+
+    return okPacket;
+}
+
+export const updateUser = async (user_id: number, user: User) : Promise<OkPacket> => {
+    const okPacket = await userDAO.updateUser(user);
+    return okPacket;
+};

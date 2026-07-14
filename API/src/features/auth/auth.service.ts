@@ -23,7 +23,7 @@ export const login = async (username: string, password: string) => {
     if (!validPassword)
         throw new Error("Invalid username or password");
 
-    const user = (await userService.getUserByUsername(username))[0];
+    const user = (await userService.getUserByUsername(username));
     const authenticatedUser: AuthenticatedUser = {
         user_id: credential.user_id,
         company_id: user.company_id,

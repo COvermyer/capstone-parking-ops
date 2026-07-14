@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as userController from './user.controller';
 import { requireAuthentication } from '../../middleware/request-auth.middleware';
+import { requiredRoles } from '../../middleware/authorization.middleware';
 
 /**
  * Defines a router and assigns the HTTP methods associated with the data concern
@@ -9,11 +10,28 @@ const router = Router();
 router.get(
     '/users',
     // requireAuthentication,
-    userController.getAllUsers
+    // requiredRoles("ADMIN", "SYSADMIN"),
+    userController.getUsers
 );
 
-router
-    .route('/users/:user_id')
-    .get(userController.getUserById);
+router.get(
+    '/users/:user_id',
+    userController.getUserById
+);
+
+router.post(
+    '/users',
+    userController.createUser
+);
+
+router.put(
+    '/users/:user_id',
+    userController.updateUser
+);
+
+router.delete(
+    '/user/:user_id',
+    userController.deleteUser
+);
 
 export default router;

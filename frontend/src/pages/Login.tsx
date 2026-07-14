@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 
 /**
  * Defines the login form. 
@@ -31,6 +32,13 @@ const Login = () => {
             setError("Invalid username or password");
         } finally {
             setLoading(false);
+        }
+
+        try {
+            const response = await api.get('/api/users');
+            console.log(response);
+        } catch (err) {
+            console.log(err);
         }
     };
 
