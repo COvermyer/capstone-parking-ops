@@ -30,6 +30,26 @@ export const getAllUsers = async (): Promise<User[]> => {
 }
 
 /**
+ * Gets users by pagination parameters
+ * @param page 
+ * @param pageSize 
+ * @returns 
+ */
+export const getUsersPaginated = async (page: number, pageSize: number): Promise<User[]> => {
+    const users = await userDAO.readUsersPaginated(page, pageSize);
+
+    // role logic
+    for (const user of users) {
+        let assignments = await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user.user_id);
+        (user as User).roles = assignments.map((assignment) => 
+            assignment.role_id).map((role_id) => lookupService.getRole(role_id) as string
+        );
+    }
+
+    return users;
+};
+
+/**
  * Get by user id method for Users
  * @param user_id The user_id of the requested User
  * @returns a Promise for User array
@@ -67,6 +87,11 @@ export const getUserByUsername = async (username: string): Promise<User> => {
     return users[0];
 }
 
+/**
+ * 
+ * @param user Creates a user
+ * @returns 
+ */
 export const createUser = async (user: User) : Promise<OkPacket> => {
     const okPacket = await userDAO.createUser(user);
     // TODO: Role logic?
@@ -74,7 +99,23 @@ export const createUser = async (user: User) : Promise<OkPacket> => {
     return okPacket;
 }
 
+/**
+ * Updates a user
+ * @param user_id 
+ * @param user 
+ * @returns 
+ */
 export const updateUser = async (user_id: number, user: User) : Promise<OkPacket> => {
-    const okPacket = await userDAO.updateUser(user);
+    const okPacket = await userDAO.updateUser(user_id, user);
+    return okPacket;
+};
+
+/**
+ * Deletes a user
+ * @param user_id 
+ * @returns 
+ */
+export const deleteUser = async (user_id: number) : Promise<OkPacket> => {
+    const okPacket = await userDAO.deleteUser(user_id);
     return okPacket;
 };

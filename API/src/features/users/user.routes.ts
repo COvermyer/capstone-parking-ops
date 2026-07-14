@@ -30,7 +30,7 @@ router.put(
 );
 
 router.delete(
-    '/user/:user_id',
+    '/users/:user_id',
     userController.deleteUser
 );
 

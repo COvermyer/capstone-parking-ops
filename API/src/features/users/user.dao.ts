@@ -28,6 +28,10 @@ export const readUsers = async () => {
     return execute<User[]>(userQueries.getAllUsers, []);
 };
 
+export const readUsersPaginated = async (page: number, pageSize: number) => {
+    return execute<User[]>(userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
+};
+
 /**
  * 
  * @param user_id 
@@ -49,6 +53,10 @@ export const createUser = async (user: User) => {
     return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
 };
 
-export const updateUser = async (user: User) => {
-    return execute<OkPacket>(userQueries.updateUser, []);
+export const updateUser = async (user_id: number, user: User) => {
+    return execute<OkPacket>(userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
+};
+
+export const deleteUser = async (user_id: number) => {
+    return execute<OkPacket>(userQueries.deleteUserByUserId, [user_id]);
 };
