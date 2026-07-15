@@ -36,6 +36,5 @@ export const requiredRoles = (...roles: string[]) => {
         } catch (error) {
             next(error);
         }
-        
     }
 };

@@ -4,11 +4,12 @@
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
  */
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import * as userCredentialService from '../user-credentials/user-credential.service';
 import * as userService from '../users/user.service'
 import * as jwtService from "../../services/jwt.service";
 import { AuthenticatedUser } from './authenticated-user';
+import * as passwordService from '../../services/password.service'
 
 export const login = async (username: string, password: string) => {
     const credential = (await userCredentialService.getUserCredentialByUsername(username))[0];
@@ -18,7 +19,7 @@ export const login = async (username: string, password: string) => {
         throw new Error("Invalid username or password");
 
     // verify password
-    const validPassword = await bcrypt.compare(password, credential.password_hash);
+    const validPassword = await passwordService.verifyPassword(password, credential.password_hash);
 
     if (!validPassword)
         throw new Error("Invalid username or password");

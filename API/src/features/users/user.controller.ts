@@ -170,10 +170,17 @@ export const deleteUser: RequestHandler = async (req: Request, res: Response) =>
             return res.status(400).json({ error: 'Invalid User ID' });
         }
 
+        const okPacket = await userService.deleteUser(userId); // execute the service method
+
+        // 404 Not Found response
+        if (okPacket.affectedRows === 0) {
+            console.log(`[user.controller][deleteUser][Not Found] User not found with ID: ${userId}`);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         // 204 OK - No Content response
-        const okPacket = await userService.deleteUser(userId);
         console.log(`[user.controller][deleteUser][Success] Deleted user with ID: ${userId}`);
-        return res.status(204);
+        return res.status(204).end();
     } catch (error) {
         // 500 Server Error
         console.error(`[user.controller][deleteUser][Error] Failed to delete user: ${error}`);

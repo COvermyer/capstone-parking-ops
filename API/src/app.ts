@@ -48,6 +48,7 @@ app.get('/health', (req, res) => {
     });
 });
 
+// TODO: Remove me, test only
 // import * as hash from './generate-pass';
 // hash.generateHash();
 
@@ -59,15 +60,15 @@ app.get('/health', (req, res) => {
 async function start() {
     if (process.env.NODE_ENV === 'production') {
         // Production-specific settings can be added here
-        console.log('Running in production mode');
+        console.log('[app.ts][start][Info] Running in production mode');
     } else if (process.env.NODE_ENV === 'development') {
         app.use(logger); // Use the logger middleware in development mode
     } 
 
     app.listen(port, () => {
         // console.log(`Server is running on port ${port}`);
-        console.log(`Running at: http://localhost:${port}`);
-        console.log(`Environment: ${process.env.NODE_ENV}`);
+        console.log(`[app.ts][start][[Info] Running at: http://localhost:${port}`);
+        console.log(`[app.ts][start][Info] Environment: ${process.env.NODE_ENV}`);
     });
 
     // Initialize the lookup service to populate static lookup tables in memory

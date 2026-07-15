@@ -5,6 +5,6 @@
  * Last Updated: 07/10/2026
  */
 export const citationOffenseCodeQueries = {
-    getAllCitationOffenseCodes: `SELECT * FROM citation_offence_codes;`,
-    getCitationOffenseCodeById: `SELECT * FROM citation_offence_codes WHERE offence_code_id = ?;`
+    getAllCitationOffenseCodes: `SELECT * FROM citation_offense_codes;`,
+    getCitationOffenseCodeById: `SELECT * FROM citation_offense_codes WHERE offense_code_id = ?;`
 }

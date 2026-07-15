@@ -69,7 +69,7 @@ class LookupService {
             // Citation Offense codes
             let citationOffenseCodeEntities = await citationOffenseCodeService.getCitationOffenseCodes();
             citationOffenseCodeEntities.forEach(offenseCode => {
-                this.citationOffenseCodes.set(offenseCode.offence_code_id, offenseCode as CitationOffenseCode);
+                this.citationOffenseCodes.set(offenseCode.offense_code_id, offenseCode as CitationOffenseCode);
             });
 
             // Citation Status Codes
@@ -80,22 +80,29 @@ class LookupService {
 
 
             // Log the number of entries in each lookup table
-            console.log(`[LookupService][initialize][Success]: Initialized userRoles lookup table with ${this.userRoles.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized stateCodes lookup table with ${this.stateCodes.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized permitStatusCodes lookup table with ${this.permitStatusCodes.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized appealStatusCodes lookup table with ${this.appealStatusCodes.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized colorCodes lookup table with ${this.colorCodes.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized citationOffenseCodes lookup table with ${this.citationOffenseCodes.size} entries`);
-            console.log(`[LookupService][initialize][Success]: Initialized citationStatusCodes lookup table with ${this.citationStatusCodes.size} entries`);
-            // console.log('[LookupService][initialize][Success]: Lookup tables initialized');
+            console.log(`[lookup.service][initialize][Success]: Initialized userRoles lookup table with ${this.userRoles.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized stateCodes lookup table with ${this.stateCodes.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized permitStatusCodes lookup table with ${this.permitStatusCodes.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized appealStatusCodes lookup table with ${this.appealStatusCodes.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized colorCodes lookup table with ${this.colorCodes.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized citationOffenseCodes lookup table with ${this.citationOffenseCodes.size} entries`);
+            console.log(`[lookup.service][initialize][Success]: Initialized citationStatusCodes lookup table with ${this.citationStatusCodes.size} entries`);
+            // console.log('[lookup.service][initialize][Success]: Lookup tables initialized');
         } catch (error) {
-            console.error('[LookupService][initialize][Error]:', error);
+            console.error('[lookup.service][initialize][Error]:', error);
         }
     }
 
     // Getters for UserRoleCode
     getRole(id: number): string | undefined {
         return this.userRoles.get(id);
+    }
+
+    getRoleId(searchValue: string) : number {
+        for (const [key, value] of this.userRoles) {
+            if (value === searchValue) return key;
+        }
+        throw new Error(`[lookup.service][getRoleId][Error] Unknown role: ${searchValue}`);
     }
 
     getAllRoles(): Map<number, string> {

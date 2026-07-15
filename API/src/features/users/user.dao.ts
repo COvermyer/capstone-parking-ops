@@ -11,8 +11,8 @@
  * This file is part of the API layer of the application and serves as an intermediary between the service layer and the database.
  * This file is the only point of contact with the database for the User entity, ensuring that all database interactions are centralized and maintainable.
  */
-import { OkPacket } from "mysql";
-import { execute } from '../../services/mysql.connector'
+import { OkPacket, PoolConnection } from "mysql";
+import { execute, executeWithConnection } from '../../services/mysql.connector'
 import { User } from './user.model';
 import { userQueries } from './user.queries';
 
@@ -49,14 +49,20 @@ export const readUserByUsername = async (username: string) => {
     return execute<User[]>(userQueries.getUserByUsername, [username]);
 };
 
-export const createUser = async (user: User) => {
+export const createUser = async (user: User, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<OkPacket>(connection, userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number])
     return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
 };
 
-export const updateUser = async (user_id: number, user: User) => {
+export const updateUser = async (user_id: number, user: User, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<OkPacket>(connection, userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
     return execute<OkPacket>(userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
 };
 
-export const deleteUser = async (user_id: number) => {
+export const deleteUser = async (user_id: number, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<OkPacket>(connection, userQueries.deleteUserByUserId, [user_id])
     return execute<OkPacket>(userQueries.deleteUserByUserId, [user_id]);
 };
