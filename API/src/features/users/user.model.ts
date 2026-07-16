@@ -11,6 +11,32 @@ export interface User {
     last_name: string;
     email: string;
     phone_number: string;
-    created: string;
+    created?: string;
     roles: string[];
-}
+};
+
+export interface CreateUserRequest {
+    // User information
+    company_id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+
+    // User Credentials
+    username: string;
+    password: string;
+};
+
+export interface UpdateUserRequest {
+    // User information
+    company_id?: number;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone_number?: string;
+
+    // User Credentials
+    // username: string;
+    // password: string;
+};

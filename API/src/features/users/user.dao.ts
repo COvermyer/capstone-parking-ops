@@ -13,8 +13,9 @@
  */
 import { OkPacket, PoolConnection } from "mysql";
 import { execute, executeWithConnection } from '../../services/mysql.connector'
-import { User } from './user.model';
-import { userQueries } from './user.queries';
+import { UpdateUserRequest, User } from './user.model';
+import { buildUpdateUserQuery, userQueries } from './user.queries';
+import { UpdateQuery } from "../../types/update-query.model";
 
 /**
  * 
@@ -55,10 +56,17 @@ export const createUser = async (user: User, connection?: PoolConnection) => {
     return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
 };
 
-export const updateUser = async (user_id: number, user: User, connection?: PoolConnection) => {
+// export const updateUser = async (user_id: number, user: User, connection?: PoolConnection) => {
+//     if (connection)
+//         return executeWithConnection<OkPacket>(connection, userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
+//     return execute<OkPacket>(userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
+// };
+
+export const updateUser = async (user_id: number, updateRequest: UpdateUserRequest, connection?: PoolConnection) => {
+    const updateQuery: UpdateQuery = buildUpdateUserQuery(user_id, updateRequest);
     if (connection)
-        return executeWithConnection<OkPacket>(connection, userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
-    return execute<OkPacket>(userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
+        return executeWithConnection<OkPacket>(connection, updateQuery.sql, updateQuery.values);
+    return execute<OkPacket>(updateQuery.sql, updateQuery.values);
 };
 
 export const deleteUser = async (user_id: number, connection?: PoolConnection) => {

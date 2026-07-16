@@ -18,6 +18,7 @@ import stateCodeRoutes from './features/state-codes/state-code.routes';
 import appealStatusCodeRoutes from './features/appeal-status-codes/appeal-status-code.routes';
 import colorCodeRoutes from './features/color-codes/color-code.routes';
 import authRoutes from './features/auth/auth.routes';
+import { apiRateLimiter } from './middleware/rate-limit.middleware';
 // import { authenticatedRequest } from './middleware/request-auth.middleware';
 
 dotenv.config({ quiet: true }); // Load environment variables from .env file
@@ -33,6 +34,10 @@ app.use(cors());
 // Helmet security middleware
 app.use(helmet());
 
+// Rate limiting
+app.set('trust proxy', 1); // trust the proxy to receive client IP
+app.use(apiRateLimiter); // Limit api requests to 100 per minute per user
+
 // Add routers
 app.use('/api', userRoutes);
 app.use('/api', userRoleCodeRoutes);
@@ -47,6 +52,8 @@ app.get('/health', (req, res) => {
         timestamp: new Date()
     });
 });
+
+
 
 // TODO: Remove me, test only
 // import * as hash from './generate-pass';

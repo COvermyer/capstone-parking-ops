@@ -7,11 +7,11 @@
 import * as userDAO from './user.dao';
 // import * as userRoleAssignmentDAO from '../user-role-assignments/user-role-assignment.dao';
 import * as userRoleAssignmentService from '../user-role-assignments/user-role-assignment.service';
-import { User } from './user.model';
+import { User, CreateUserRequest, UpdateUserRequest } from './user.model';
 import lookupService from '../../services/lookup.service';
 import * as passwordService from '../../services/password.service';
 import { OkPacket, PoolConnection } from 'mysql';
-import { CreateUserRequest } from '../../types/create-user-request.model';
+// import { CreateUserRequest } from '../../types/create-user-request.model';
 import * as userCredentialService from '../user-credentials/user-credential.service';
 // import { UserCredential } from '../user-credentials/user-credential.model';
 import { transaction } from '../../services/mysql.connector';
@@ -114,7 +114,6 @@ export const createUser = async (request: CreateUserRequest) : Promise<OkPacket>
             email: request.email,
             phone_number: request.phone_number,
             roles: [ 'USER' ], // DEFAULT ROLE
-            created: '' // Throwaway value
         }
 
         const userResult = await userDAO.createUser({
@@ -159,10 +158,10 @@ export const createUser = async (request: CreateUserRequest) : Promise<OkPacket>
  * @param user 
  * @returns 
  */
-export const updateUser = async (user_id: number, user: User, connection?: PoolConnection) : Promise<OkPacket> => {
+export const updateUser = async (user_id: number, request: UpdateUserRequest, connection?: PoolConnection) : Promise<OkPacket> => {
     if (connection)
-        return await userDAO.updateUser(user_id, user, connection);
-    return await userDAO.updateUser(user_id, user);
+        return await userDAO.updateUser(user_id, request, connection);
+    return await userDAO.updateUser(user_id, request);
 };
 
 /**

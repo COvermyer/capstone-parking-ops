@@ -58,6 +58,12 @@ export const getUserRoleAssignmentsByRoleId: RequestHandler = async (req: Reques
     }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 export const deleteAllRolesFromUserById: RequestHandler = async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.user_id as string, 10);
@@ -84,6 +90,12 @@ export const deleteAllRolesFromUserById: RequestHandler = async (req: Request, r
     }
 };
 
+/**
+ * 
+ * @param req 
+ * @param res 
+ * @returns 
+ */
 export const deleteRoleFromUser: RequestHandler = async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.user_id as string, 10);

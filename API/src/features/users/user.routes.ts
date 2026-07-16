@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as userController from './user.controller';
 import { requireAuthentication } from '../../middleware/request-auth.middleware';
 import { requiredRoles } from '../../middleware/authorization.middleware';
+import * as notImplemented from '../../types/not-implemented.controller';
 
 /**
  * Defines a router and assigns the HTTP methods associated with the data concern
@@ -19,12 +20,18 @@ router.get(
     userController.getUserById
 );
 
+router.get(
+    '/users/me',
+    requireAuthentication,
+    notImplemented.notImplemented
+);
+
 router.post(
     '/users',
     userController.createUser
 );
 
-router.put(
+router.patch(
     '/users/:user_id',
     userController.updateUser
 );
@@ -32,6 +39,13 @@ router.put(
 router.delete(
     '/users/:user_id',
     userController.deleteUser
+);
+
+// user credentials
+router.patch(
+    '/users/me/credentials',
+    requireAuthentication,
+    notImplemented.notImplemented
 );
 
 export default router;
