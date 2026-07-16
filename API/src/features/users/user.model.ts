@@ -4,6 +4,10 @@
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
  */
+
+/**
+ * Defines the contract for a User object, joined with the user_role_assignments table with the `roles` field
+ */
 export interface User {
     user_id: number;
     company_id: number;
@@ -15,6 +19,9 @@ export interface User {
     roles: string[];
 };
 
+/**
+ * Defines the contract for a CreateUserRequest, including all data necessary to add a user to the database
+ */
 export interface CreateUserRequest {
     // User information
     company_id: number;
@@ -28,6 +35,9 @@ export interface CreateUserRequest {
     password: string;
 };
 
+/**
+ * Defines the contract for an UpdateUserRequest, allowing field exclusion for partial/PATCH updates
+ */
 export interface UpdateUserRequest {
     // User information
     company_id?: number;

@@ -8,13 +8,30 @@ import { Request, RequestHandler, Response } from 'express';
 import * as userService from './user.service';
 import { User } from './user.model';
 import { OkPacket } from 'mysql';
+import { AuthenticatedRequest } from '../auth/authenticated-request';
 
 /**
- * Request Handler for GET /users endpoint - query params are checked, and routing logic is implemented
- * based on existing params to determine which service method is needed. 
- * @param req 
- * @param res 
- * @returns 
+ * POST /users
+ */
+export const createUser: RequestHandler = async (req: Request, res: Response) => {
+    try {
+        // 201 Created response
+        const okPacket = await userService.createUser(req.body);
+        console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
+        return res.status(201).json({ message: 'User created successfully', user_id: okPacket.insertId });
+    } catch (error) {
+        // 500 Server Error response
+        console.error(`[user.controller][createUser][Error] Error creating user: ${error}`);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+/**
+ * GET /users
+ * 
+ * Supports:
+ * ?page=&pageSize=
+ * ?username=
  */
 export const getUsers = async (req: Request, res: Response) => {
     // Uses query params to determine which service method should be utilized
@@ -88,9 +105,36 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 /**
- * Request Handler for GET /users/user_id endpoint
- * @param req Request Body
- * @param res Response Body
+ * GET /users/me
+ */
+export const getCurrentUser: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const userId = req.user?.user_id;
+        if (!userId) { // should be unreachable, but backup in case auth middleware fails.
+            // 401 Unauthorized
+            console.error(`[user.controller][getCurrentUser][Error] Unauthorized`); 
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const user = await userService.getUserById(userId);
+        if (!user) { // reachable only if a user is deleted while logged in
+            // 404 Not Found response
+            console.log(`[user.controller][getCurrentUser][Not Found] User not found with ID: ${userId}`);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // 200 OK response
+        console.log(`[user.controller][getCurrentUser][Success] Found user with ID: ${userId}`);
+        return res.status(200).json(user);          
+    } catch (error) {
+        // 500 Server Error
+        console.error(`[user.controller][getCurrentUser][Error] Error fetching user: ${error}`);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+/**
+ * GET /users/:user_id
  */
 export const getUserById: RequestHandler = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.user_id as string, 10);
@@ -113,28 +157,7 @@ export const getUserById: RequestHandler = async (req: Request, res: Response) =
 }
 
 /**
- * Request Handler for POST /users endpoint
- * @param req Request Body
- * @param res Response Body
- */
-export const createUser: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        // 201 Created response
-        const okPacket = await userService.createUser(req.body);
-        console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
-        return res.status(201).json({ message: 'User created successfully', user_id: okPacket.insertId });
-    } catch (error) {
-        // 500 Server Error response
-        console.error(`[user.controller][createUser][Error] Error creating user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
-
-/**
- * Request Handler for PUT /users/user_id endpoint
- * @param req 
- * @param res 
- * @returns 
+ * PATCH /users/user_id 
  */
 export const updateUser: RequestHandler = async (req: Request, res: Response) => {
     try {
@@ -157,9 +180,7 @@ export const updateUser: RequestHandler = async (req: Request, res: Response) =>
 };
 
 /**
- * Request Handler for DELETE /users/user_id
- * @param req 
- * @param res 
+ * DELETE /users/:user_id 
  */
 export const deleteUser: RequestHandler = async (req: Request, res: Response) => {
     try {

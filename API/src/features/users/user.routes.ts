@@ -8,6 +8,14 @@ import * as notImplemented from '../../types/not-implemented.controller';
  * Defines a router and assigns the HTTP methods associated with the data concern
  */
 const router = Router();
+
+// CREATE - User
+router.post(
+    '/users',
+    userController.createUser
+);
+
+// READ - User
 router.get(
     '/users',
     // requireAuthentication,
@@ -15,37 +23,44 @@ router.get(
     userController.getUsers
 );
 
+// READ - current user
+router.get(
+    '/users/me',
+    requireAuthentication,
+    userController.getCurrentUser
+);
+
+// READ - Given user by ID
 router.get(
     '/users/:user_id',
     userController.getUserById
 );
 
-router.get(
-    '/users/me',
+// UPDATE Current user-credentials
+router.patch(
+    '/users/me/credentials',
     requireAuthentication,
     notImplemented.notImplemented
 );
 
-router.post(
-    '/users',
-    userController.createUser
+// UPDATE - Given user-credentials by user ID
+router.patch(
+    '/users/:user_id/credentials',
+    requireAuthentication,
+    requiredRoles("ADMIN"),
+    notImplemented.notImplemented
 );
 
+// UPDATE - User
 router.patch(
     '/users/:user_id',
     userController.updateUser
 );
 
+// DELETE - User
 router.delete(
     '/users/:user_id',
     userController.deleteUser
-);
-
-// user credentials
-router.patch(
-    '/users/me/credentials',
-    requireAuthentication,
-    notImplemented.notImplemented
 );
 
 export default router;

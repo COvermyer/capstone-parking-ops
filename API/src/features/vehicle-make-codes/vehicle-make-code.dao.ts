@@ -8,6 +8,9 @@ import { execute } from "../../services/mysql.connector";
 import { VehicleMakeCode } from "./vehicle-make-code.model";
 import { vehicleMakeCodeQueries } from "./vehicle-make-code.queries";
 
+// =============================
+//              READ
+// =============================
 /**
  * Get all VehicleMakeCodes DAO method
  * @returns a Promise of a VehicleMakeCode array

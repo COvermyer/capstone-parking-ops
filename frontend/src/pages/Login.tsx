@@ -26,7 +26,6 @@ const Login = () => {
         try {
             await login(username, password);
             console.log("Log in successful");
-
         } catch (err) {
             console.log("Log in failed");
             setError("Invalid username or password");
@@ -35,7 +34,7 @@ const Login = () => {
         }
 
         try {
-            const response = await api.get('/api/users');
+            const response = await api.get('/api/users/me');
             console.log(response);
         } catch (err) {
             console.log(err);

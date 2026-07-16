@@ -25,8 +25,8 @@ export const getUserCredentialByUsername = async (username: string) => {
 export const createUserCredential = async (credential: UserCredential, connection?: PoolConnection) => {
     try { // try to add the new credential
         if (connection)
-            return await userCredentialDao.addUserCredential(credential, connection);
-        return await userCredentialDao.addUserCredential(credential);
+            return await userCredentialDao.createUserCredential(credential, connection);
+        return await userCredentialDao.createUserCredential(credential);
     } catch (err: any) {
         // if the error is a unique constraint check failure, return the user-friendly error
         if (err.code === 'ER_DUP_ENTRY') {

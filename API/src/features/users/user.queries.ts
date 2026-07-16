@@ -1,11 +1,14 @@
-import { UpdateQuery } from "../../types/update-query.model";
-import { UpdateUserRequest } from "./user.model";
-
 /**
  * Author: Caleb Overmyer
  * Filename: user.queries.ts
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
+ */
+import { UpdateQuery } from "../../types/update-query.model";
+import { UpdateUserRequest } from "./user.model";
+
+/**
+ * Defines static queries for the `users` table
  */
 export const userQueries = {
     getAllUsers: `SELECT * FROM users;`,

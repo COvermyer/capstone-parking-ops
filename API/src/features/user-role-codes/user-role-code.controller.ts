@@ -3,6 +3,8 @@
  * Filename: user-role-code.controller.ts
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
+ * 
+ * @deprecated user.controller.ts will handle any user based concerns exposed to the front end
  */
 import { Request, RequestHandler, Response } from 'express';
 import * as userRoleCodeService from './user-role-code.service';

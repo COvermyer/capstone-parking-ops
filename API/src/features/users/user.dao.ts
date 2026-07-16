@@ -17,6 +17,24 @@ import { UpdateUserRequest, User } from './user.model';
 import { buildUpdateUserQuery, userQueries } from './user.queries';
 import { UpdateQuery } from "../../types/update-query.model";
 
+// =============================
+//              CREATE
+// =============================
+/**
+ * 
+ * @param user 
+ * @param connection 
+ * @returns 
+ */
+export const createUser = async (user: User, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<OkPacket>(connection, userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number])
+    return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
+};
+
+// =============================
+//              READ
+// =============================
 /**
  * 
  * @returns a promise that resolves to an array of User entities. If no users are found, the promise resolves to an empty array.
@@ -29,6 +47,12 @@ export const readUsers = async () => {
     return execute<User[]>(userQueries.getAllUsers, []);
 };
 
+/**
+ * 
+ * @param page 
+ * @param pageSize 
+ * @returns 
+ */
 export const readUsersPaginated = async (page: number, pageSize: number) => {
     return execute<User[]>(userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
 };
@@ -46,22 +70,25 @@ export const readUserById = async (user_id: number) => {
     return execute<User[]>(userQueries.getUserById, [user_id]);
 };
 
+/**
+ * 
+ * @param username 
+ * @returns 
+ */
 export const readUserByUsername = async (username: string) => {
     return execute<User[]>(userQueries.getUserByUsername, [username]);
 };
 
-export const createUser = async (user: User, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number])
-    return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
-};
-
-// export const updateUser = async (user_id: number, user: User, connection?: PoolConnection) => {
-//     if (connection)
-//         return executeWithConnection<OkPacket>(connection, userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
-//     return execute<OkPacket>(userQueries.updateUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number, user_id]);
-// };
-
+// =============================
+//              UPDATE
+// =============================
+/**
+ * 
+ * @param user_id 
+ * @param updateRequest 
+ * @param connection 
+ * @returns 
+ */
 export const updateUser = async (user_id: number, updateRequest: UpdateUserRequest, connection?: PoolConnection) => {
     const updateQuery: UpdateQuery = buildUpdateUserQuery(user_id, updateRequest);
     if (connection)
@@ -69,6 +96,16 @@ export const updateUser = async (user_id: number, updateRequest: UpdateUserReque
     return execute<OkPacket>(updateQuery.sql, updateQuery.values);
 };
 
+
+// =============================
+//              DELETE
+// =============================
+/**
+ * 
+ * @param user_id 
+ * @param connection 
+ * @returns 
+ */
 export const deleteUser = async (user_id: number, connection?: PoolConnection) => {
     if (connection)
         return executeWithConnection<OkPacket>(connection, userQueries.deleteUserByUserId, [user_id])
