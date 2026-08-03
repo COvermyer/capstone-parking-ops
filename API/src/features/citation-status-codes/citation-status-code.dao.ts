@@ -4,7 +4,8 @@
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
  */
-import { execute } from '../../services/mysql.connector';
+import { PoolConnection } from 'mysql';
+import { getExecutor, executeWithExecutor } from '../../services/mysql.connector';
 import { CitationStatusCode } from './citation-status-code.model';
 import { citationStatusCodeQueries } from './citation-status-code.queries';
 
@@ -16,8 +17,9 @@ import { citationStatusCodeQueries } from './citation-status-code.queries';
  * 
  * @returns 
  */
-export const readCitationStatusCodes = async () => {
-    return execute<CitationStatusCode[]>(citationStatusCodeQueries.getCitationStatusCodes, []);
+export const readCitationStatusCodes = async (connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<CitationStatusCode[]>(executor, citationStatusCodeQueries.getCitationStatusCodes, []);
 };
 
 /**
@@ -25,6 +27,7 @@ export const readCitationStatusCodes = async () => {
  * @param status_code 
  * @returns 
  */
-export const readCitationStatusCodesById = async (status_code: number) => {
-    return execute<CitationStatusCode[]>(citationStatusCodeQueries.getCitationStatusCodeById, [status_code]);
+export const readCitationStatusCodesById = async (status_code: number, connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<CitationStatusCode[]>(executor, citationStatusCodeQueries.getCitationStatusCodeById, [status_code]);
 }

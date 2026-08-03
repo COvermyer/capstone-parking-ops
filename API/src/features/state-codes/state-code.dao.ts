@@ -4,7 +4,8 @@
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
  */
-import { execute } from '../../services/mysql.connector';
+import { PoolConnection } from 'mysql';
+import { getExecutor, executeWithExecutor } from '../../services/mysql.connector';
 import { StateCode } from './state-code.model';
 import { stateCodeQueries } from './state-code.queries';
 
@@ -16,8 +17,9 @@ import { stateCodeQueries } from './state-code.queries';
  * 
  * @returns 
  */
-export const readStateCodes = async () => {
-    return execute<StateCode[]>(stateCodeQueries.getAllStateCodes, []);
+export const readStateCodes = async (connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<StateCode[]>(executor, stateCodeQueries.getAllStateCodes, []);
 }
 
 /**
@@ -25,8 +27,9 @@ export const readStateCodes = async () => {
  * @param state_id 
  * @returns 
  */
-export const readStateCodeByStateId = async (state_id: number) => {
-    return execute<StateCode[]>(stateCodeQueries.getStateCodeByStateId, [state_id]);
+export const readStateCodeByStateId = async (state_id: number, connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<StateCode[]>(executor, stateCodeQueries.getStateCodeByStateId, [state_id]);
 }
 
 /**
@@ -34,8 +37,9 @@ export const readStateCodeByStateId = async (state_id: number) => {
  * @param state_name 
  * @returns 
  */
-export const readStateCodeByStateName = async (state_name: string) => {
-    return execute<StateCode[]>(stateCodeQueries.getStateCodeByStateName, [state_name]);
+export const readStateCodeByStateName = async (state_name: string, connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<StateCode[]>(executor, stateCodeQueries.getStateCodeByStateName, [state_name]);
 }
 
 /**
@@ -43,6 +47,7 @@ export const readStateCodeByStateName = async (state_name: string) => {
  * @param state_abbreviation 
  * @returns 
  */
-export const readStateCodeByStateAbbreviation = async (state_abbreviation: string) => {
-    return execute<StateCode[]>(stateCodeQueries.getStateCodeByStateAbbreviation, [state_abbreviation]);
+export const readStateCodeByStateAbbreviation = async (state_abbreviation: string, connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<StateCode[]>(executor, stateCodeQueries.getStateCodeByStateAbbreviation, [state_abbreviation]);
 }

@@ -4,7 +4,8 @@
  * Created: 07/10/2026
  * Last Updated: 07/10/2026
  */
-import { execute } from "../../services/mysql.connector";
+import { PoolConnection } from 'mysql';
+import { getExecutor, executeWithExecutor } from '../../services/mysql.connector';
 import { CitationOffenseCode } from "./citation-offense-code.model";
 import { citationOffenseCodeQueries } from "./citation-offense-code.queries";
 
@@ -16,8 +17,9 @@ import { citationOffenseCodeQueries } from "./citation-offense-code.queries";
  * 
  * @returns 
  */
-export const readCitationOffenseCodes = async () => {
-    return execute<CitationOffenseCode[]>(citationOffenseCodeQueries.getAllCitationOffenseCodes, []);
+export const readCitationOffenseCodes = async (connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<CitationOffenseCode[]>(executor, citationOffenseCodeQueries.getAllCitationOffenseCodes, []);
 }
 
 /**
@@ -25,6 +27,7 @@ export const readCitationOffenseCodes = async () => {
  * @param offense_code_id 
  * @returns 
  */
-export const readCitationOffenseCodeById = async (offense_code_id: number) => {
-    return execute<CitationOffenseCode[]>(citationOffenseCodeQueries.getCitationOffenseCodeById, [offense_code_id]);
+export const readCitationOffenseCodeById = async (offense_code_id: number, connection?: PoolConnection) => {
+    const executor = getExecutor(connection);
+    return executeWithExecutor<CitationOffenseCode[]>(executor, citationOffenseCodeQueries.getCitationOffenseCodeById, [offense_code_id]);
 }

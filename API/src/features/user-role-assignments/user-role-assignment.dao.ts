@@ -5,7 +5,7 @@
  * Last Updated: 07/10/2026
  */
 import { OkPacket, PoolConnection } from 'mysql';
-import { execute, executeWithConnection } from '../../services/mysql.connector';
+import { getExecutor, executeWithExecutor } from '../../services/mysql.connector';
 import { UserRoleAssignment } from './user-role-assignment.model';
 import { userRoleAssignmentQueries } from './user-role-assignment.queries';
 
@@ -20,9 +20,8 @@ import { userRoleAssignmentQueries } from './user-role-assignment.queries';
  * @returns 
  */
 export const createUserRoleAssignment = async (role_assignment: UserRoleAssignment, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userRoleAssignmentQueries.createUserRoleAssignment, [role_assignment.user_id, role_assignment.role_id])
-    return execute<OkPacket>(userRoleAssignmentQueries.createUserRoleAssignment, [role_assignment.user_id, role_assignment.role_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, userRoleAssignmentQueries.createUserRoleAssignment, [role_assignment.user_id, role_assignment.role_id]);
 };
 
 
@@ -34,9 +33,8 @@ export const createUserRoleAssignment = async (role_assignment: UserRoleAssignme
  * @returns 
  */
 export const readUserRoleAssignments = async (connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getAllUserRoleAssignments, []);
-    return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getAllUserRoleAssignments, []);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<UserRoleAssignment[]>(executor, userRoleAssignmentQueries.getAllUserRoleAssignments, []);
 }
 
 /**
@@ -45,9 +43,8 @@ export const readUserRoleAssignments = async (connection?: PoolConnection) => {
  * @returns 
  */
 export const readUserRoleAssignmentsByUserId = async (user_id: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getUserRoleAssignmentByUserId, [user_id]);
-    return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getUserRoleAssignmentByUserId, [user_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<UserRoleAssignment[]>(executor, userRoleAssignmentQueries.getUserRoleAssignmentByUserId, [user_id]);
 }
 
 /**
@@ -56,9 +53,8 @@ export const readUserRoleAssignmentsByUserId = async (user_id: number, connectio
  * @returns 
  */
 export const readUserRoleAssignmentsByRoleId = async (role_id: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getUserRoleAssignmentsByRoleId, [role_id]);
-    return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getUserRoleAssignmentsByRoleId, [role_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<UserRoleAssignment[]>(executor, userRoleAssignmentQueries.getUserRoleAssignmentsByRoleId, [role_id]);
 }
 
 // =============================
@@ -76,9 +72,8 @@ export const readUserRoleAssignmentsByRoleId = async (role_id: number, connectio
  * @returns 
  */
 export const deleteRoleFromUser = async (role_assignment: UserRoleAssignment, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userRoleAssignmentQueries.deleteRoleFromUser, [role_assignment.user_id, role_assignment.role_id]);
-    return execute<OkPacket>(userRoleAssignmentQueries.deleteRoleFromUser, [role_assignment.user_id, role_assignment.role_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, userRoleAssignmentQueries.deleteRoleFromUser, [role_assignment.user_id, role_assignment.role_id]);
 };
 
 /**
@@ -88,7 +83,6 @@ export const deleteRoleFromUser = async (role_assignment: UserRoleAssignment, co
  * @returns 
  */
 export const deleteAllRolesFromUserById = async (user_id: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userRoleAssignmentQueries.deleteAllRolesFromUserById, [user_id]);
-    return execute<OkPacket>(userRoleAssignmentQueries.deleteAllRolesFromUserById, [user_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, userRoleAssignmentQueries.deleteAllRolesFromUserById, [user_id]);
 };
