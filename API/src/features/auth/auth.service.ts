@@ -10,19 +10,18 @@ import * as userService from '../users/user.service'
 import * as jwtService from "../../services/jwt.service";
 import { AuthenticatedUser } from './authenticated-user';
 import * as passwordService from '../../services/password.service'
+import { AppError } from '../../common/errors/app.error';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
 
 export const login = async (username: string, password: string) => {
     const credential = (await userCredentialService.getUserCredentialByUsername(username))[0];
-    
-
     if (!credential)
-        throw new Error("Invalid username or password");
+        throw new AppError("Invalid username or password", HTTP_STATUS.UNAUTHORIZED);
 
     // verify password
     const validPassword = await passwordService.verifyPassword(password, credential.password_hash);
-
     if (!validPassword)
-        throw new Error("Invalid username or password");
+        throw new AppError("Invalid username or password", HTTP_STATUS.UNAUTHORIZED);
 
     const user = (await userService.getUserByUsername(username));
     const authenticatedUser: AuthenticatedUser = {
