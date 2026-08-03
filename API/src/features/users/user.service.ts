@@ -117,56 +117,68 @@ export const getUserByUsername = async (username: string): Promise<User> => {
  * @param user Creates a user
  * @returns 
  */
-export const createUser = async (request: CreateUserRequest) : Promise<OkPacket> => {
-    return transaction(async (connection): Promise<OkPacket> => {
-        let user: User = {
-            user_id: -1, // Throwaway value
-            company_id: request.company_id,
-            first_name: request.first_name,
-            last_name: request.last_name,
-            email: request.email,
-            phone_number: request.phone_number,
-            roles: [ 'USER' ], // DEFAULT ROLE
-        }
+export const createUser = async (
+    request: CreateUserRequest,
+    connection?: PoolConnection
+) : Promise<OkPacket> => {
+    // if a connection is provided, use it; otherwise, create a new transaction
+    if (connection) {
+        return createUserInternal(request, connection);
+    }
 
-        const userResult = await userDAO.createUser({
-            user_id: -1, // Throwaway value
-            company_id: request.company_id,
-            first_name: request.first_name,
-            last_name: request.last_name,
-            email: request.email,
-            phone_number: request.phone_number,
-            roles: [ 'USER' ], // DEFAULT ROLE
-            created: '' // Throwaway value
-        }, connection)
-        const userId = userResult.insertId;
-        if (!userId) { // 500 response if user creation fails // FIXME: may have a better status code for this, but 500 is a safe fallback
-            throw new AppError("Failed to create user", HTTP_STATUS.INTERNAL_SERVER_ERROR);
-        }
-
-        // handle user-credentials
-        const passwordHash = await passwordService.hashPassword(request.password);
-        await userCredentialService.createUserCredential({
-            user_id: userId,
-            username: request.username,
-            password_hash: passwordHash
-        }, connection);
-
-        // handle role assignments
-        for (const role of user.roles) {
-            let roleId = lookupService.getRoleId(role);
-            await userRoleAssignmentService.createUserRoleAssignment(
-                {
-                    user_id: userId,
-                    role_id: roleId
-                },
-                connection
-            );
-        }
-
-        return userResult;
-    });
+    return transaction(async (connection) => {
+        return createUserInternal(request, connection);
+    })
 }
+
+const createUserInternal = async (
+    request: CreateUserRequest,
+    connection: PoolConnection
+) : Promise<OkPacket> => {
+    let user: User = {
+        user_id: -1, // Throwaway value
+        company_id: request.company_id,
+        first_name: request.first_name,
+        last_name: request.last_name,
+        email: request.email,
+        phone_number: request.phone_number,
+        roles: [ 'USER' ], // DEFAULT ROLE
+    }
+    const userResult = await userDAO.createUser({
+        user_id: -1, // Throwaway value
+        company_id: request.company_id,
+        first_name: request.first_name,
+        last_name: request.last_name,
+        email: request.email,
+        phone_number: request.phone_number,
+        roles: [ 'USER' ], // DEFAULT ROLE
+        created: '' // Throwaway value
+    }, connection)
+    const userId = userResult.insertId;
+    if (!userId) { // 500 response if user creation fails // FIXME: may have a better status code for this, but 500 is a safe fallback
+        throw new AppError("Failed to create user", HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    }
+    // handle user-credentials
+    const passwordHash = await passwordService.hashPassword(request.password);
+    await userCredentialService.createUserCredential({
+        user_id: userId,
+        username: request.username,
+        password_hash: passwordHash
+    }, connection);
+    // handle role assignments
+    for (const role of user.roles) {
+        let roleId = lookupService.getRoleId(role);
+        await userRoleAssignmentService.createUserRoleAssignment(
+            {
+                user_id: userId,
+                role_id: roleId
+            },
+            connection
+        );
+    }
+
+    return userResult;
+};
 
 /**
  * Updates a user
@@ -175,21 +187,11 @@ export const createUser = async (request: CreateUserRequest) : Promise<OkPacket>
  * @returns 
  */
 export const updateUser = async (user_id: number, request: UpdateUserRequest, connection?: PoolConnection) : Promise<OkPacket> => {
-    // if part of a transaction, use the provided connection, otherwise use the default connection
-    if (connection) {
-        const user = await userDAO.readUserById(user_id, connection); // check the user exists first
-        if (user.length === 0) {
-            throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
-        }
-        return await userDAO.updateUser(user_id, request, connection);
-    }
-
-    // default pool connection
-    const user = await userDAO.readUserById(user_id);  // check the user exists first
+    const user = await userDAO.readUserById(user_id, connection);  // check the user exists first
     if (user.length === 0) {
         throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
     }
-    return await userDAO.updateUser(user_id, request);
+    return await userDAO.updateUser(user_id, request, connection);
 };
 
 /**
@@ -200,19 +202,9 @@ export const updateUser = async (user_id: number, request: UpdateUserRequest, co
  * @returns 
  */
 export const deleteUser = async (user_id: number, connection?: PoolConnection) : Promise<OkPacket> => {
-    // if part of a transaction, use the provided connection, otherwise use the default connection
-    if (connection) {
-        const user = await userDAO.readUserById(user_id, connection); // check the user exists first
-        if (user.length === 0) {
-            throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
-        }
-        return await userDAO.deleteUser(user_id, connection);
-    }
-
-    // default pool connection
-    const user = await userDAO.readUserById(user_id);  // check the user exists first
+    const user = await userDAO.readUserById(user_id, connection);  // check the user exists first
     if (user.length === 0) {
         throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
     }
-    return await userDAO.deleteUser(user_id);
+    return await userDAO.deleteUser(user_id, connection);
 };
