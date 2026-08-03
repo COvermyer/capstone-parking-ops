@@ -33,7 +33,9 @@ export const createUserRoleAssignment = async (role_assignment: UserRoleAssignme
  * 
  * @returns 
  */
-export const readUserRoleAssignments = async () => {
+export const readUserRoleAssignments = async (connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getAllUserRoleAssignments, []);
     return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getAllUserRoleAssignments, []);
 }
 
@@ -42,7 +44,9 @@ export const readUserRoleAssignments = async () => {
  * @param user_id 
  * @returns 
  */
-export const readUserRoleAssignmentsByUserId = async (user_id: number) => {
+export const readUserRoleAssignmentsByUserId = async (user_id: number, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getUserRoleAssignmentByUserId, [user_id]);
     return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getUserRoleAssignmentByUserId, [user_id]);
 }
 
@@ -51,7 +55,9 @@ export const readUserRoleAssignmentsByUserId = async (user_id: number) => {
  * @param role_id 
  * @returns 
  */
-export const readUserRoleAssignmentsByRoleId = async (role_id: number) => {
+export const readUserRoleAssignmentsByRoleId = async (role_id: number, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<UserRoleAssignment[]>(connection, userRoleAssignmentQueries.getUserRoleAssignmentsByRoleId, [role_id]);
     return execute<UserRoleAssignment[]>(userRoleAssignmentQueries.getUserRoleAssignmentsByRoleId, [role_id]);
 }
 
