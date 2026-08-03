@@ -10,19 +10,21 @@ import { User } from './user.model';
 import { OkPacket } from 'mysql';
 import { AuthenticatedRequest } from '../auth/authenticated-request';
 import { asyncHandler } from '../../middleware/async-handler.middleware';
+import { AppError } from '../../common/errors/app.error';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
 
 /**
  * POST /users
  */
-export const createUser: RequestHandler = async (req: Request, res: Response) => {
+export const createUser: RequestHandler = asyncHandler(async (req, res) => {
     const okPacket = await userService.createUser(req.body);
-    console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
+    // console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
     return res.status(201).json({ 
         success: true, 
         message: 'User created successfully', 
         user_id: okPacket.insertId 
     });
-};
+});
 
 /**
  * GET /users
@@ -55,125 +57,54 @@ export const getUsers: RequestHandler = asyncHandler(async(req, res) => {
     }
 
     // getAllUsers
-    try {
-        const users: User[] = await userService.getAllUsers();
-        if (users.length === 0) {
-            // 404 Not Found response
-            console.log('[user.controller][getUsers][getAllUsers][Not Found] No users found.');
-            return res.status(404).json({ error: 'Users not found GET ALL USERS' });
-        }
-
-        // 200 OK response
-        console.log(`[user.controller][getUsers][getAllUsers][Success] Fetched users: `, users);
-        return res.status(200).json(users);
-    } catch (error) {
-        // 500 Server Error
-        console.error(`[user.controller][getUsers][getAllUsers][Error] Error fetching users: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    const users: User[] = await userService.getAllUsers();
+    return res.json(users);
 });
 
 /**
  * GET /users/me
  */
-export const getCurrentUser: RequestHandler = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const userId = req.user?.user_id;
-        if (!userId) { // should be unreachable, but backup in case auth middleware fails.
-            // 401 Unauthorized
-            console.error(`[user.controller][getCurrentUser][Error] Unauthorized`); 
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const user = await userService.getUserById(userId);
-        if (!user) { // reachable only if a user is deleted while logged in
-            // 404 Not Found response
-            console.log(`[user.controller][getCurrentUser][Not Found] User not found with ID: ${userId}`);
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // 200 OK response
-        console.log(`[user.controller][getCurrentUser][Success] Found user with ID: ${userId}`);
-        return res.status(200).json(user);          
-    } catch (error) {
-        // 500 Server Error
-        console.error(`[user.controller][getCurrentUser][Error] Error fetching user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
+export const getCurrentUser: RequestHandler = asyncHandler(async (req: AuthenticatedRequest, res) => {
+    const userId = req.user?.user_id;
+    if (!userId) { // should be unreachable, but backup in case auth middleware fails.
+        throw new AppError('User ID not found in request', HTTP_STATUS.UNAUTHORIZED);
     }
-};
+
+    const user = await userService.getUserById(userId);
+    return res.json(user);
+});
 
 /**
  * GET /users/:user_id
  */
-export const getUserById: RequestHandler = async (req: Request, res: Response) => {
+export const getUserById: RequestHandler = asyncHandler(async (req, res) => {
     const userId = parseInt(req.params.user_id as string, 10);
-    try {
-        const user: User = await userService.getUserById(userId);
-        if (!user) {
-            // 404 Not found response
-            console.log(`[user.controller][getUserById][Not Found] No user found with ID: ${userId}`);
-            return res.status(404).json({ error: 'User not found' });
-        } else {
-            // 200 OK response
-            console.log(`[user.controller][getUserById][Success] Fetched user: `, user);
-            return res.status(200).json(user);
-        }
-    } catch (error) {
-        // 500 Server Error response
-        console.error(`[user.controller][getUserById][Error] Error fetching user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
+    const user: User = await userService.getUserById(userId);
+    return res.json(user);
+});
 
 /**
  * PATCH /users/user_id 
  */
-export const updateUser: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        let userId = parseInt(req.params.user_id as string, 10);
-        if (Number.isNaN(userId)) {
-            // 400 Invalid response
-            console.log(`[user.controller][updateUser][Error] Invalid User ID: ${req.params.user_id as string}`);
-            return res.status(400).json({ error: 'Invalid User ID' });
-        }
-
-        // 200 OK response
-        const okPacket: OkPacket = await userService.updateUser(userId, req.body);
-        console.log(`[user.controller][updateUser][Success] Updated User ID: ${userId}`);
-        return res.status(200).json({ message: 'User updated successfully', user_id: userId })
-    } catch (error) {
-        // 500 Server Error response
-        console.error(`[user.controller][updateUser][Error] Failed to update user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
+export const updateUser: RequestHandler = asyncHandler(async (req, res) => {
+    let userId = parseInt(req.params.user_id as string, 10);
+    if (Number.isNaN(userId)) {
+        throw new AppError(`Invalid User ID: ${req.params.user_id as string}`, HTTP_STATUS.BAD_REQUEST);
     }
-};
+
+    const okPacket: OkPacket = await userService.updateUser(userId, req.body);
+    return res.json(okPacket); // FIXME: Should maybe be a success message?
+});
 
 /**
  * DELETE /users/:user_id 
  */
-export const deleteUser: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        let userId = parseInt(req.params.user_id as string, 10);
-        if (Number.isNaN(userId)) {
-            // 400 Invalid response
-            console.log(`[user.controller][deleteUser][Error] Invalid User ID: ${req.params.user_id as string}`);
-            return res.status(400).json({ error: 'Invalid User ID' });
-        }
-
-        const okPacket = await userService.deleteUser(userId); // execute the service method
-
-        // 404 Not Found response
-        if (okPacket.affectedRows === 0) {
-            console.log(`[user.controller][deleteUser][Not Found] User not found with ID: ${userId}`);
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // 204 OK - No Content response
-        console.log(`[user.controller][deleteUser][Success] Deleted user with ID: ${userId}`);
-        return res.status(204).end();
-    } catch (error) {
-        // 500 Server Error
-        console.error(`[user.controller][deleteUser][Error] Failed to delete user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
+export const deleteUser: RequestHandler = asyncHandler(async (req, res) => {
+    let userId = parseInt(req.params.user_id as string, 10);
+    if (Number.isNaN(userId)) {
+        throw new AppError(`Invalid User ID: ${req.params.user_id as string}`, HTTP_STATUS.BAD_REQUEST);
     }
-};
+
+    const okPacket = await userService.deleteUser(userId);
+    return res.json(okPacket); // FIXME: Should maybe be a success message?
+});

@@ -13,7 +13,9 @@ import { Response, NextFunction } from 'express';
 import * as jwtService from '../services/jwt.service';
 
 import { AuthenticatedRequest } from '../features/auth/authenticated-request';
-// import { AuthenticatedUser } from '../types/authenticated-user';
+import { AppError } from '../common/errors/app.error';
+import { HTTP_STATUS } from '../common/errors/error-codes';
+import { AuthenticatedUser } from '../features/auth/authenticated-user';
 
 /**
  * 
@@ -48,20 +50,15 @@ export const requireAuthentication = (
 
     if (!token) {
         // no token was attached to the request header
-        return res.status(401).json({ 
-            message: 'Missing or invalid Authorization header.' 
-        });
+        throw new AppError('Missing or invalid Authorization header.', HTTP_STATUS.BAD_REQUEST);
+    }
+    
+    const authenticatedUser: AuthenticatedUser = jwtService.verifyToken(token); // verify the token
+    if (!authenticatedUser) {
+        // if the token is invalid or expired, throw an error
+        throw new AppError('Invalid or expired token.', HTTP_STATUS.UNAUTHORIZED);
     }
 
-    try {
-        const authenticatedUser = jwtService.verifyToken(token); // verify the token
-        req.user = authenticatedUser; // attach the authenticated user to the request body
-        next(); // continue past the middleware 
-
-    } catch (error) {
-        // Unable to validate token due to expiration or invalidity
-        return res.status(401).json({
-            message: 'Invalid or expired token.'
-        })
-    }
+    req.user = authenticatedUser; // attach the authenticated user to the request body
+    next();
 };

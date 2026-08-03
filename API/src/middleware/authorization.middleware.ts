@@ -10,6 +10,8 @@ import { Response, NextFunction } from "express";
 
 import { AuthenticatedRequest } from "../features/auth/authenticated-request";
 import * as AuthorizationService from "../services/authorization.service";
+import { AppError } from "../common/errors/app.error";
+import { HTTP_STATUS } from "../common/errors/error-codes";
 
 /**
  * 
@@ -24,12 +26,13 @@ export const requiredRoles = (...roles: string[]) => {
     ) => {
         try {
             if (!req.user) {
-                return res.status(401).json({ error: 'Unauthorized or invalid credentials' });
+                // pass errors to error handler middleware
+                throw new AppError('Unauthorized or invalid credentials', HTTP_STATUS.UNAUTHORIZED);
             }
 
             const authorized = await AuthorizationService.hasRoles(req.user, roles);
             if (!authorized) {
-                return res.status(403).json({ error: 'Forbidden' });
+                throw new AppError('Forbidden', HTTP_STATUS.FORBIDDEN);
             }
 
             next();
