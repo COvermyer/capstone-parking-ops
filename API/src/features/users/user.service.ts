@@ -15,6 +15,8 @@ import { OkPacket, PoolConnection } from 'mysql';
 import * as userCredentialService from '../user-credentials/user-credential.service';
 // import { UserCredential } from '../user-credentials/user-credential.model';
 import { transaction } from '../../services/mysql.connector';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
+import { AppError } from '../../common/errors/app.error';
 
 
 /**
@@ -23,6 +25,9 @@ import { transaction } from '../../services/mysql.connector';
  */
 export const getAllUsers = async (): Promise<User[]> => {
     const users = await userDAO.readUsers();
+    if (users.length === 0) {
+        throw new AppError("No users found", HTTP_STATUS.NOT_FOUND);
+    }
 
     // Role logic
     for (const user of users) {
@@ -43,6 +48,11 @@ export const getAllUsers = async (): Promise<User[]> => {
  */
 export const getUsersPaginated = async (page: number, pageSize: number): Promise<User[]> => {
     const users = await userDAO.readUsersPaginated(page, pageSize);
+    // console.log(`SERVICE USERS: ${JSON.stringify(users)}`); // DEBUGGING
+    if (users.length === 0) {
+        console.log(`[user.service][getUsersPaginated][Not Found] Throwing AppError for no users found`);
+        throw new AppError("No users found", HTTP_STATUS.NOT_FOUND);
+    }
 
     // role logic
     for (const user of users) {

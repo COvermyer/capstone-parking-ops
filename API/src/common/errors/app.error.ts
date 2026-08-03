@@ -28,5 +28,7 @@ export class AppError extends Error {
             this,
             AppError.prototype
         );
+
+        Error.captureStackTrace(this, this.constructor);
     }
 }

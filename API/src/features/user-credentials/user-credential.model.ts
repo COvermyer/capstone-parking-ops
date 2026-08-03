@@ -24,8 +24,6 @@ export interface UpdateUserCredentialRequest {
 }
 
 export interface HashedUpdateUserCredentialRequest {
-    // current_password_hash: string;
-
     username?: string;
     new_password_hash?: string;
 }

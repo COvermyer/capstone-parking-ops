@@ -9,21 +9,19 @@ import * as userService from './user.service';
 import { User } from './user.model';
 import { OkPacket } from 'mysql';
 import { AuthenticatedRequest } from '../auth/authenticated-request';
+import { asyncHandler } from '../../middleware/async-handler.middleware';
 
 /**
  * POST /users
  */
 export const createUser: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        // 201 Created response
-        const okPacket = await userService.createUser(req.body);
-        console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
-        return res.status(201).json({ message: 'User created successfully', user_id: okPacket.insertId });
-    } catch (error) {
-        // 500 Server Error response
-        console.error(`[user.controller][createUser][Error] Error creating user: ${error}`);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    const okPacket = await userService.createUser(req.body);
+    console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
+    return res.status(201).json({ 
+        success: true, 
+        message: 'User created successfully', 
+        user_id: okPacket.insertId 
+    });
 };
 
 /**
@@ -33,7 +31,7 @@ export const createUser: RequestHandler = async (req: Request, res: Response) =>
  * ?page=&pageSize=
  * ?username=
  */
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers: RequestHandler = asyncHandler(async(req, res) => {
     // Uses query params to determine which service method should be utilized
     const { 
         page,
@@ -44,45 +42,16 @@ export const getUsers = async (req: Request, res: Response) => {
 
     // getUsersPaginated
     if (page && pageSize) {
-        try {
-            let pageAsN = parseInt(page as string, 10);
-            let pageSizeAsN = parseInt(pageSize as string, 10);
-
-            const users: User[] = await userService.getUsersPaginated(pageAsN, pageSizeAsN);
-            if (users.length === 0) {
-                // 404 Not Found response
-                console.log(`[user.controller][getUsers][getUsersPaginated][Not Found] No users found`);
-                return res.status(404).json({ error: 'Users not found' });
-            }
-
-            // 200 OK response
-            console.log(`[user.controller][getUsers][getUsersPaginated][Success] Fetched users:`, users);
-            return res.status(200).json(users)
-        } catch (error) {
-            // 500 Server Error
-            console.error(`[user.controller][getUsers][getUsersPaginated][Error] Error fetching users: ${error}`);
-            return res.status(500).json({ message: 'Internal Server Error' })
-        }
+        let pageAsN = parseInt(page as string, 10);
+        let pageSizeAsN = parseInt(pageSize as string, 10);
+        const users: User[] = await userService.getUsersPaginated(pageAsN, pageSizeAsN);
+        return res.json(users);
     }
 
     // getUserByUsername
     if (username) {
-        try {
-            const user: User = await userService.getUserByUsername(username as string);
-            if (!user) {
-                // 404 Not Found response
-                console.log(`[user.controller][getUserByUsername][Not Found] No user found with username: ${username}`);
-                return res.status(404).json({ error: 'Username not found' });
-            } else {
-                // 200 OK response
-                console.log(`[user.controller][getUserByUsername][Success] Fetched user: `, user);
-                return res.status(200).json(user);
-            }
-        } catch (error) {
-            // 500 Server Error
-            console.error(`[user.controller][getUsers][getUserByUsername][Error] Error fetching users: ${error}`);
-            return res.status(500).json({ message: 'Internal Server Error' })
-        }
+        const user: User = await userService.getUserByUsername(username as string);
+        return res.json(user);
     }
 
     // getAllUsers
@@ -91,7 +60,7 @@ export const getUsers = async (req: Request, res: Response) => {
         if (users.length === 0) {
             // 404 Not Found response
             console.log('[user.controller][getUsers][getAllUsers][Not Found] No users found.');
-            return res.status(404).json({ error: 'Users not found' });
+            return res.status(404).json({ error: 'Users not found GET ALL USERS' });
         }
 
         // 200 OK response
@@ -102,7 +71,7 @@ export const getUsers = async (req: Request, res: Response) => {
         console.error(`[user.controller][getUsers][getAllUsers][Error] Error fetching users: ${error}`);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
-};
+});
 
 /**
  * GET /users/me

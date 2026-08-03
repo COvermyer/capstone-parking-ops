@@ -36,12 +36,12 @@ export const createUserCredential = async (credential: UserCredential, connectio
     }
 };
 
-export const updateUserCredential = async (user_id: number, request: UpdateUserCredentialRequest, connection?: PoolConnection) => {
+export const updateAuthenticatedUserCredential = async (user_id: number, request: UpdateUserCredentialRequest, connection?: PoolConnection) => {
     try {
         // Verify Current Password
         const currPasswordHash = (await userCredentialDao.readUserCredentialByUserId(user_id))[0];
         if (!(await passwordService.verifyPassword(request.current_password, currPasswordHash.password_hash))) {
-            throw new Error('Invalid password')
+            throw new Error('Invalid password');
         }
 
         // validate request fields and perform hashing

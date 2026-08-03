@@ -26,12 +26,12 @@ dotenv.config({ quiet: true }); // Load environment variables from .env file
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Use all cors
+app.use(cors());
 // Parse incoming JSON requests
 app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
-// Use all cors
-app.use(cors());
 // Helmet security middleware
 app.use(helmet());
 
@@ -47,6 +47,7 @@ app.use('/api', userRoutes);
 // app.use('/api', colorCodeRoutes);
 app.use('/auth', authRoutes);
 
+// health check endpoint
 app.get('/health', (req, res) => {
     res.json({
         status: "OK",
@@ -55,7 +56,7 @@ app.get('/health', (req, res) => {
 });
 
 // Error Handling middleware
-// app.use(errorHandler);
+app.use(errorHandler);
 
 
 /**
