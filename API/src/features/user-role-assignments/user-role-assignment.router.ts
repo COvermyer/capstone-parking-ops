@@ -13,7 +13,7 @@ import * as userRoleAssignmentController from './user-role-assignment.controller
 const router = Router();
 router
     .route('/user-role-assignments')
-    .get(userRoleAssignmentController.getUserRoleAssignments);
+    .get(userRoleAssignmentController.getAllUserRoleAssignments);
 
 router
     .route('/user-role-assignments/user/:user_id')

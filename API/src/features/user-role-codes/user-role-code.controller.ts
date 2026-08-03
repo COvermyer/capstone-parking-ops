@@ -9,6 +9,8 @@
 import { Request, RequestHandler, Response } from 'express';
 import * as userRoleCodeService from './user-role-code.service';
 import { asyncHandler } from '../../middleware/async-handler.middleware';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
+import { AppError } from '../../common/errors/app.error';
 
 /**
  * Controller Method to format response body from Service data
@@ -28,7 +30,7 @@ export const getUserRoleCodes: RequestHandler = asyncHandler(async (req, res) =>
 export const getUserRoleCodeById: RequestHandler = asyncHandler(async (req, res) => {
     const role_id = parseInt(req.params.role_id as string, 10);
     if (!role_id) {
-        return res.status(400).json({ error: 'Invalid role_id parameter' });
+        throw new AppError('Invalid role_id parameter', HTTP_STATUS.BAD_REQUEST);
     }
 
     const userRoles = await userRoleCodeService.getUserRole(role_id);
