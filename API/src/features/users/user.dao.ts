@@ -12,7 +12,7 @@
  * This file is the only point of contact with the database for the User entity, ensuring that all database interactions are centralized and maintainable.
  */
 import { OkPacket, PoolConnection } from "mysql";
-import { execute, executeWithConnection } from '../../services/mysql.connector'
+import { getExecutor, executeWithExecutor} from '../../services/mysql.connector'
 import { UpdateUserRequest, User } from './user.model';
 import { buildUpdateUserQuery, userQueries } from './user.queries';
 import { UpdateQuery } from "../../types/update-query.model";
@@ -27,9 +27,8 @@ import { UpdateQuery } from "../../types/update-query.model";
  * @returns 
  */
 export const createUser = async (user: User, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number])
-    return execute<OkPacket>(userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, userQueries.createUser, [user.company_id, user.first_name, user.last_name, user.email, user.phone_number]);
 };
 
 // =============================
@@ -44,9 +43,8 @@ export const createUser = async (user: User, connection?: PoolConnection) => {
  * The result is typed as an array of User objects, ensuring type safety and consistency with the User model defined in user.model.ts.
  */
 export const readUsers = async (connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<User[]>(connection, userQueries.getAllUsers, []);
-    return execute<User[]>(userQueries.getAllUsers, []);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<User[]>(executor, userQueries.getAllUsers, []);
 };
 
 /**
@@ -56,9 +54,8 @@ export const readUsers = async (connection?: PoolConnection) => {
  * @returns 
  */
 export const readUsersPaginated = async (page: number, pageSize: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<User[]>(connection, userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
-    return execute<User[]>(userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<User[]>(executor, userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
 };
 
 /**
@@ -71,9 +68,8 @@ export const readUsersPaginated = async (page: number, pageSize: number, connect
  * The result is typed as an array of User objects, ensuring type safety and consistency with the User model defined in user.model.ts.
  */
 export const readUserById = async (user_id: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<User[]>(connection, userQueries.getUserById, [user_id]);
-    return execute<User[]>(userQueries.getUserById, [user_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<User[]>(executor, userQueries.getUserById, [user_id]);
 };
 
 /**
@@ -82,9 +78,8 @@ export const readUserById = async (user_id: number, connection?: PoolConnection)
  * @returns 
  */
 export const readUserByUsername = async (username: string, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<User[]>(connection, userQueries.getUserByUsername, [username]);
-    return execute<User[]>(userQueries.getUserByUsername, [username]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<User[]>(executor, userQueries.getUserByUsername, [username]);
 };
 
 // =============================
@@ -99,9 +94,8 @@ export const readUserByUsername = async (username: string, connection?: PoolConn
  */
 export const updateUser = async (user_id: number, updateRequest: UpdateUserRequest, connection?: PoolConnection) => {
     const updateQuery: UpdateQuery = buildUpdateUserQuery(user_id, updateRequest);
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, updateQuery.sql, updateQuery.values);
-    return execute<OkPacket>(updateQuery.sql, updateQuery.values);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, updateQuery.sql, updateQuery.values);
 };
 
 
@@ -115,7 +109,6 @@ export const updateUser = async (user_id: number, updateRequest: UpdateUserReque
  * @returns 
  */
 export const deleteUser = async (user_id: number, connection?: PoolConnection) => {
-    if (connection)
-        return executeWithConnection<OkPacket>(connection, userQueries.deleteUserByUserId, [user_id])
-    return execute<OkPacket>(userQueries.deleteUserByUserId, [user_id]);
+    const executor = getExecutor(connection);
+    return executeWithExecutor<OkPacket>(executor, userQueries.deleteUserByUserId, [user_id]);
 };

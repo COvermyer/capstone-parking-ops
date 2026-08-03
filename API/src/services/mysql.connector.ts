@@ -7,13 +7,13 @@
 import { createPool, Pool, PoolConnection } from 'mysql';
 let pool: Pool | null = null;
 
-// export interface QueryExecutor {
-//     query(
-//         query: string,
-//         params: string[] | Object,
-//         callback: (error: Error | null, results: any) => void
-//     ): void;
-// }
+export interface QueryExecutor {
+    query(
+        query: string,
+        params: string[] | Object,
+        callback: (error: Error | null, results: any) => void
+    ): void;
+}
 
 /**
  * Initializes a pool of mySql connections for use by the API
@@ -50,30 +50,54 @@ const initializeMySqlConnector = () => {
     }
 };
 
+export const getExecutor = (
+    connection?: PoolConnection
+): QueryExecutor => {
+    if (connection) {
+        return connection;
+    }
+
+    if (!pool) { // if no pool exists, create one
+        initializeMySqlConnector();
+    }
+    return pool!;
+};
+
 /**
  * Executes a query or command in the database
  * @param query The query string to be run against the database
  * @param params an array of values to format into the query string as parameters
  * @returns a Promise of type T that is the result of the SQL operation
  */
-export const execute = <T>(query: string, params: string[] | Object): Promise<T> => {
-    try {
-        if (!pool) { // if no pool exists, create one
-            initializeMySqlConnector();
-        }
+// export const execute = <T>(query: string, params: string[] | Object): Promise<T> => {
+//     try {
+//         if (!pool) { // if no pool exists, create one
+//             initializeMySqlConnector();
+//         }
 
-        return new Promise<T>((resolve, reject) => {
-            pool!.query(query, params, (error, results) => {
-                if (error) reject(error);
-                else resolve(results);
-            })
-        });
-    } catch (error) {
-        console.error('[mysql.connector][execute][Error]: ', error);
-        throw new Error('failed to execute MySQL query');
-    }
-}
+//         return new Promise<T>((resolve, reject) => {
+//             pool!.query(query, params, (error, results) => {
+//                 if (error) reject(error);
+//                 else resolve(results);
+//             })
+//         });
+//     } catch (error) {
+//         console.error('[mysql.connector][execute][Error]: ', error);
+//         throw new Error('failed to execute MySQL query');
+//     }
+// }
 
+export const execute = <T>(
+    query: string,
+    params: string[] | Object
+): Promise<T> => {
+    const executor = getExecutor();
+    return executeWithExecutor<T>(executor, query, params);
+};
+
+/**
+ * @deprecated replaced by executor pattern
+ */
 export const executeWithConnection = <T>(
     connection: PoolConnection, 
     query: string, 
@@ -90,6 +114,43 @@ export const executeWithConnection = <T>(
     });
 };
 
+/**
+ * Executes a query using any SQL executor
+ * 
+ * This is used internally by DAOs
+ * 
+ * @param executor 
+ * @param query 
+ * @param params 
+ * @returns 
+ */
+export const executeWithExecutor = <T>(
+    executor: QueryExecutor,
+    query: string,
+    params: string[] | Object
+): Promise<T> => {
+    return new Promise<T>((resolve, reject) => {
+        executor.query(
+            query,
+            params,
+            (error, results) => {
+                if (error) { // if a transactional error occurs, reject
+                    reject(error);
+                    return;
+                }
+                resolve(results as T); // resolve with the results as type T
+            }
+        );
+    });
+};
+
+/**
+ * Defines a transaction for a series of SQL operations. 
+ * This function ensures that all operations within the transaction are executed atomically. 
+ * If any operation fails, the entire transaction is rolled back.
+ * @param callback 
+ * @returns 
+ */
 export const transaction = async <T>(
     callback: (connection: PoolConnection) => Promise<T>
 ) : Promise<T> => {
