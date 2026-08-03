@@ -5,19 +5,15 @@
  * Last Updated: 07/10/2026
  */
 import * as userDAO from './user.dao';
-// import * as userRoleAssignmentDAO from '../user-role-assignments/user-role-assignment.dao';
 import * as userRoleAssignmentService from '../user-role-assignments/user-role-assignment.service';
-import { User, CreateUserRequest, UpdateUserRequest } from './user.model';
-import lookupService from '../../services/lookup.service';
-import * as passwordService from '../../services/password.service';
-import { OkPacket, PoolConnection } from 'mysql';
-// import { CreateUserRequest } from '../../types/create-user-request.model';
 import * as userCredentialService from '../user-credentials/user-credential.service';
-// import { UserCredential } from '../user-credentials/user-credential.model';
+import * as passwordService from '../../services/password.service';
+import lookupService from '../../services/lookup.service';
+import { User, CreateUserRequest, UpdateUserRequest } from './user.model';
+import { OkPacket, PoolConnection } from 'mysql';
 import { transaction } from '../../services/mysql.connector';
 import { HTTP_STATUS } from '../../common/errors/error-codes';
 import { AppError } from '../../common/errors/app.error';
-
 
 /**
  * Get all method for Users
@@ -50,7 +46,7 @@ export const getUsersPaginated = async (page: number, pageSize: number): Promise
     const users = await userDAO.readUsersPaginated(page, pageSize);
     // console.log(`SERVICE USERS: ${JSON.stringify(users)}`); // DEBUGGING
     if (users.length === 0) {
-        console.log(`[user.service][getUsersPaginated][Not Found] Throwing AppError for no users found`);
+        // console.log(`[user.service][getUsersPaginated][Not Found] Throwing AppError for no users found`);
         throw new AppError("No users found", HTTP_STATUS.NOT_FOUND);
     }
 
@@ -72,6 +68,9 @@ export const getUsersPaginated = async (page: number, pageSize: number): Promise
  */
 export const getUserById = async (user_id: number): Promise<User> => {
     const users: User[] = await userDAO.readUserById(user_id);
+    if (users.length === 0) { // 404 response if no user found
+        throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
+    }
 
     // Role logic
     for (const user of users) {
@@ -91,6 +90,10 @@ export const getUserById = async (user_id: number): Promise<User> => {
  */
 export const getUserByUsername = async (username: string): Promise<User> => {
     const users = await userDAO.readUserByUsername(username);
+    if (users.length === 0) { // 404 response if no user found
+        throw new AppError(`User with username ${username} not found`, HTTP_STATUS.NOT_FOUND);
+    }
+
     const user: User = {
         user_id: users[0].user_id,
         company_id: users[0].company_id,
@@ -137,6 +140,9 @@ export const createUser = async (request: CreateUserRequest) : Promise<OkPacket>
             created: '' // Throwaway value
         }, connection)
         const userId = userResult.insertId;
+        if (!userId) { // 500 response if user creation fails // FIXME: may have a better status code for this, but 500 is a safe fallback
+            throw new AppError("Failed to create user", HTTP_STATUS.INTERNAL_SERVER_ERROR);
+        }
 
         // handle user-credentials
         const passwordHash = await passwordService.hashPassword(request.password);
@@ -169,8 +175,20 @@ export const createUser = async (request: CreateUserRequest) : Promise<OkPacket>
  * @returns 
  */
 export const updateUser = async (user_id: number, request: UpdateUserRequest, connection?: PoolConnection) : Promise<OkPacket> => {
-    if (connection)
+    // if part of a transaction, use the provided connection, otherwise use the default connection
+    if (connection) {
+        const user = await userDAO.readUserById(user_id, connection); // check the user exists first
+        if (user.length === 0) {
+            throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
+        }
         return await userDAO.updateUser(user_id, request, connection);
+    }
+
+    // default pool connection
+    const user = await userDAO.readUserById(user_id);  // check the user exists first
+    if (user.length === 0) {
+        throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
+    }
     return await userDAO.updateUser(user_id, request);
 };
 
@@ -180,7 +198,19 @@ export const updateUser = async (user_id: number, request: UpdateUserRequest, co
  * @returns 
  */
 export const deleteUser = async (user_id: number, connection?: PoolConnection) : Promise<OkPacket> => {
-    if (connection)
+    // if part of a transaction, use the provided connection, otherwise use the default connection
+    if (connection) {
+        const user = await userDAO.readUserById(user_id, connection); // check the user exists first
+        if (user.length === 0) {
+            throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
+        }
         return await userDAO.deleteUser(user_id, connection);
+    }
+
+    // default pool connection
+    const user = await userDAO.readUserById(user_id);  // check the user exists first
+    if (user.length === 0) {
+        throw new AppError(`User with ID ${user_id} not found`, HTTP_STATUS.NOT_FOUND);
+    }
     return await userDAO.deleteUser(user_id);
 };

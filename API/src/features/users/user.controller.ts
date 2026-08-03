@@ -19,7 +19,7 @@ import { HTTP_STATUS } from '../../common/errors/error-codes';
 export const createUser: RequestHandler = asyncHandler(async (req, res) => {
     const okPacket = await userService.createUser(req.body);
     // console.log(`[user.controller][createUser][Success] User created successfully: ${okPacket.insertId}`);
-    return res.status(201).json({ 
+    return res.status(HTTP_STATUS.CREATED).json({ 
         success: true, 
         message: 'User created successfully', 
         user_id: okPacket.insertId 
@@ -101,7 +101,7 @@ export const updateUser: RequestHandler = asyncHandler(async (req, res) => {
  */
 export const deleteUser: RequestHandler = asyncHandler(async (req, res) => {
     let userId = parseInt(req.params.user_id as string, 10);
-    if (Number.isNaN(userId)) {
+    if (Number.isNaN(userId)) { // FIXME: Should possibly be handled 
         throw new AppError(`Invalid User ID: ${req.params.user_id as string}`, HTTP_STATUS.BAD_REQUEST);
     }
 

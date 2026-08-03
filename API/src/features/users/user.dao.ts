@@ -43,7 +43,9 @@ export const createUser = async (user: User, connection?: PoolConnection) => {
  * It uses the execute function from the MySQL connector service to perform the query defined in user.queries.ts.
  * The result is typed as an array of User objects, ensuring type safety and consistency with the User model defined in user.model.ts.
  */
-export const readUsers = async () => {
+export const readUsers = async (connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<User[]>(connection, userQueries.getAllUsers, []);
     return execute<User[]>(userQueries.getAllUsers, []);
 };
 
@@ -53,7 +55,9 @@ export const readUsers = async () => {
  * @param pageSize 
  * @returns 
  */
-export const readUsersPaginated = async (page: number, pageSize: number) => {
+export const readUsersPaginated = async (page: number, pageSize: number, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<User[]>(connection, userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
     return execute<User[]>(userQueries.getUsersPaginated, [pageSize, ((page - 1) * pageSize)]);
 };
 
@@ -66,7 +70,9 @@ export const readUsersPaginated = async (page: number, pageSize: number) => {
  * It uses the execute function from the MySQL connector service to perform the query defined in user.queries.ts.
  * The result is typed as an array of User objects, ensuring type safety and consistency with the User model defined in user.model.ts.
  */
-export const readUserById = async (user_id: number) => {
+export const readUserById = async (user_id: number, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<User[]>(connection, userQueries.getUserById, [user_id]);
     return execute<User[]>(userQueries.getUserById, [user_id]);
 };
 
@@ -75,7 +81,9 @@ export const readUserById = async (user_id: number) => {
  * @param username 
  * @returns 
  */
-export const readUserByUsername = async (username: string) => {
+export const readUserByUsername = async (username: string, connection?: PoolConnection) => {
+    if (connection)
+        return executeWithConnection<User[]>(connection, userQueries.getUserByUsername, [username]);
     return execute<User[]>(userQueries.getUserByUsername, [username]);
 };
 

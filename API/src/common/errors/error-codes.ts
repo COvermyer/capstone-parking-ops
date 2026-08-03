@@ -1,3 +1,15 @@
+/**
+ * Author: Caleb Overmyer
+ * Filename: app.error.ts
+ * Created: 08/03/2026
+ */
+
+/**
+ * Used to define HTTP status codes within the API to remove 'magic numbers' and improve code readability
+ * 
+ * Example usage:
+ * return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "User not found" });
+ */
 export const HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
