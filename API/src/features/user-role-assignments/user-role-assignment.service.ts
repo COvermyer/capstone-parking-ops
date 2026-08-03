@@ -37,27 +37,19 @@ export const getUserRoleAssignmentsByRoleId = async (role_id: number): Promise<U
 }
 
 export const createUserRoleAssignment = async (userRoleAssignment: UserRoleAssignment, connection?: PoolConnection) => {
-    if (connection)
-        return userRoleAssignmentDAO.createUserRoleAssignment(userRoleAssignment, connection);
-    return userRoleAssignmentDAO.createUserRoleAssignment(userRoleAssignment);
+    return userRoleAssignmentDAO.createUserRoleAssignment(userRoleAssignment, connection);
 };
 
 export const deleteRoleFromUser = async (userRoleAssignment: UserRoleAssignment, connection?: PoolConnection) => {
-    if (connection)
-        return userRoleAssignmentDAO.deleteRoleFromUser(userRoleAssignment, connection);
-    return userRoleAssignmentDAO.deleteRoleFromUser(userRoleAssignment);
+    return userRoleAssignmentDAO.deleteRoleFromUser(userRoleAssignment, connection);
 };
 
 export const deleteAllRolesFromUserById = async (user_id: number, connection?: PoolConnection) => {
-    const assignment = (connection) // ensure assignments exist for the user before attempting deletion
-        ? await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user_id, connection) 
-        : await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user_id);
+    const assignment = await userRoleAssignmentDAO.readUserRoleAssignmentsByUserId(user_id, connection);
     if (assignment.length === 0) { // not found
         throw new AppError(`No role assignments found for user with ID ${user_id}`, HTTP_STATUS.NOT_FOUND);
     }
     
     // return the result of the deletion operation, using the provided connection if available
-    return (connection) 
-        ? userRoleAssignmentDAO.deleteAllRolesFromUserById(user_id, connection) 
-        : userRoleAssignmentDAO.deleteAllRolesFromUserById(user_id);
+    return userRoleAssignmentDAO.deleteAllRolesFromUserById(user_id, connection);
 };

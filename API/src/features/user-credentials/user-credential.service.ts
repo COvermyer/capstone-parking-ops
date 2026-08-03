@@ -24,9 +24,7 @@ export const getUserCredentialByUsername = async (username: string) => {
 
 export const createUserCredential = async (credential: UserCredential, connection?: PoolConnection) => {
     try { // try to add the new credential
-        if (connection)
-            return await userCredentialDao.createUserCredential(credential, connection);
-        return await userCredentialDao.createUserCredential(credential);
+        return await userCredentialDao.createUserCredential(credential, connection);
     } catch (err: any) {
         // if the error is a unique constraint check failure, return the user-friendly error
         if (err.code === 'ER_DUP_ENTRY') {
@@ -60,14 +58,12 @@ export const updateAuthenticatedUserCredential = async (user_id: number, request
         }
 
         // Return the HashedUpdateUserCredentialRequest through to the DAO
-        if (connection)
-            return userCredentialDao.updateUserCredential(user_id, hashed, connection);
-        return userCredentialDao.updateUserCredential(user_id, hashed);
+        return userCredentialDao.updateUserCredential(user_id, hashed, connection);
     } catch (error) {
         throw error;
     }
 };
 
-export const deleteUserCredential = async (user_id: number) => {
-    return userCredentialDao.deleteUserCredential(user_id);
+export const deleteUserCredential = async (user_id: number, connection?: PoolConnection) => {
+    return userCredentialDao.deleteUserCredential(user_id, connection);
 };
