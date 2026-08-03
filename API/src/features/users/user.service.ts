@@ -194,6 +194,8 @@ export const updateUser = async (user_id: number, request: UpdateUserRequest, co
 
 /**
  * Deletes a user
+ * FIXME: needs to be refactored to handle deletion of user-credentials and user-role-assignments in a transaction. Currently, it only deletes the user record.
+ * Fails on any dependencies due to foreign key constraints. This is a known issue and will be addressed in a future update.
  * @param user_id 
  * @returns 
  */

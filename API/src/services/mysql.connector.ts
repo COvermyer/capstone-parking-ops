@@ -7,6 +7,14 @@
 import { createPool, Pool, PoolConnection } from 'mysql';
 let pool: Pool | null = null;
 
+// export interface QueryExecutor {
+//     query(
+//         query: string,
+//         params: string[] | Object,
+//         callback: (error: Error | null, results: any) => void
+//     ): void;
+// }
+
 /**
  * Initializes a pool of mySql connections for use by the API
  */
