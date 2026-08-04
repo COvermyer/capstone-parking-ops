@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from './pages/Login';
+import LoginPage from './pages/LoginPage';
 import Default from "./pages/Default";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
@@ -15,7 +15,7 @@ const App = () => {
 				/>
 				<Route 
 					path='/login'
-					element={<Login />}
+					element={<LoginPage />}
 				/>
 				<Route 
 					path='/unauthorized'

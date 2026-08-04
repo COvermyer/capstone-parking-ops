@@ -7,7 +7,7 @@ import api from '../services/api';
  * TODO: Redesign so that the page is containable within a stylization element
  * @returns JSX containing the login form
  */
-const Login = () => {
+const LoginPage = () => {
     const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -78,4 +78,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;
