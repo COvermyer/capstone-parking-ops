@@ -6,6 +6,8 @@
  */
 import { Request, RequestHandler, Response } from 'express';
 import * as colorCodeService from './color-code.service';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
+import { AppError } from '../../common/errors/app.error';
 
 /**
  * Controller Method to format response body from Service data
@@ -13,14 +15,8 @@ import * as colorCodeService from './color-code.service';
  * @param res Response Body
  */
 export const getColorCodes: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        const colorCodes = await colorCodeService.getColorCodes();
-        console.log('[colorCodeController][getColorCodes][Success]: ', colorCodes);
-        res.json(colorCodes);
-    } catch (error) {
-        console.log('[colorCodeController][getColorCodes][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch color codes' });
-    }
+    const colorCodes = await colorCodeService.getColorCodes();
+    return res.json(colorCodes);
 };
 
 /**
@@ -30,14 +26,12 @@ export const getColorCodes: RequestHandler = async (req: Request, res: Response)
  */
 export const getColorCodeById: RequestHandler = async (req: Request, res: Response) => {
     const color_id = parseInt(req.params.color_id as string, 10);
-    try {
-        const colorCode = await colorCodeService.getColorCode(color_id);
-        console.log('[colorCodeController][getColorCodeById][Success]: ', colorCode[0]);
-        res.json(colorCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[colorCodeController][getColorCodeById][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch color code' });
+    if (!color_id || isNaN(color_id)) {
+        throw new AppError("Invalid color_id parameter", HTTP_STATUS.BAD_REQUEST);
     }
+
+    const colorCode = await colorCodeService.getColorCode(color_id);
+    return res.json(colorCode);
 };
 
 /**
@@ -47,12 +41,9 @@ export const getColorCodeById: RequestHandler = async (req: Request, res: Respon
  */
 export const getColorCodeByName: RequestHandler = async (req: Request, res: Response) => {
     const color_name = req.params.color_name as string;
-    try {
-        const colorCode = await colorCodeService.getColorCodeByName(color_name);
-        console.log('[colorCodeController][getColorCodeByName][Success]: ', colorCode[0]);
-        res.json(colorCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[colorCodeController][getColorCodeByName][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch color code' });
+    if (!color_name) {
+        throw new AppError("Invalid color_name parameter", HTTP_STATUS.BAD_REQUEST);
     }
+    const colorCode = await colorCodeService.getColorCodeByName(color_name);
+    return res.json(colorCode);
 };
