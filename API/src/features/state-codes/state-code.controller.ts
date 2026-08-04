@@ -6,60 +6,51 @@
  */
 import { Request, RequestHandler, Response } from 'express';
 import * as stateCodeService from './state-code.service';
+import { AppError } from '../../common/errors/app.error';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
+import { asyncHandler } from '../../middleware/async-handler.middleware';
 
 /**
  * Controller Method to format response body from Service data
  * @param req Request Body
  * @param res Response Body
  */
-export const getAllStateCodes: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        const stateCodes = await stateCodeService.getAllStateCodes();
-        console.log('[stateCodeController][getAllStateCodes][Success]: ', stateCodes);
-        res.json(stateCodes);
-    } catch (error) {
-        console.log('[stateCodeController][getAllStateCodes][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch state codes' });
-    }
-};
+export const getAllStateCodes: RequestHandler = asyncHandler(async (req, res) => {
+    const stateCodes = await stateCodeService.getAllStateCodes();
+    return res.json(stateCodes);
+});
 
 /**
  * Controller Method to format response body from Service data
  * @param req Request Body
  * @param res Response Body
  */
-export const getStateCodeByStateId: RequestHandler = async (req: Request, res: Response) => {
+export const getStateCodeByStateId: RequestHandler = asyncHandler(async (req: Request, res: Response) => {
     const state_id = parseInt(req.params.state_id as string, 10);
-    try {
-        const stateCode = await stateCodeService.getStateCodeByStateId(state_id);
-        console.log('[stateCodeController][getStateCodeByStateId][Success]: ', stateCode[0]);
-        res.json(stateCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[stateCodeController][getStateCodeByStateId][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch state code' });
+    if (!state_id || isNaN(state_id)) {
+        throw new AppError("Invalid state_id parameter", HTTP_STATUS.BAD_REQUEST);
     }
-};
 
-export const getStateCodeByStateName: RequestHandler = async (req: Request, res: Response) => {
+    const stateCode = await stateCodeService.getStateCodeByStateId(state_id);
+    return res.json(stateCode);
+});
+
+export const getStateCodeByStateName: RequestHandler = asyncHandler(async (req, res) => {
     const state_name = req.params.state_name as string;
-    try {
-        const stateCode = await stateCodeService.getStateCodeByStateName(state_name);
-        console.log('[stateCodeController][getStateCodeByStateName][Success]: ', stateCode[0]);
-        res.json(stateCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[stateCodeController][getStateCodeByStateName][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch state code' });
+    if (!state_name) {
+        throw new AppError("Invalid state_name parameter", HTTP_STATUS.BAD_REQUEST);
     }
-};
 
-export const getStateCodeByStateAbbreviation: RequestHandler = async (req: Request, res: Response) => {
+    const stateCode = await stateCodeService.getStateCodeByStateName(state_name);
+    return res.json(stateCode);
+});
+
+export const getStateCodeByStateAbbreviation: RequestHandler = asyncHandler(async (req, res) => {
     const state_abbreviation = req.params.state_abbreviation as string;
-    try {
-        const stateCode = await stateCodeService.getStateCodeByStateAbbreviation(state_abbreviation);
-        console.log('[stateCodeController][getStateCodeByStateAbbreviation][Success]: ', stateCode[0]);
-        res.json(stateCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[stateCodeController][getStateCodeByStateAbbreviation][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch state code' });
+    if (!state_abbreviation) {
+        throw new AppError("Invalid state_abbreviation parameter", HTTP_STATUS.BAD_REQUEST);
     }
-};
+
+    const stateCode = await stateCodeService.getStateCodeByStateAbbreviation(state_abbreviation);
+    return res.json(stateCode);
+});
