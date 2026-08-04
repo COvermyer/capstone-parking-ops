@@ -6,36 +6,31 @@
  */
 import { Request, RequestHandler, Response } from "express";
 import * as citationStatusCodeService from './citation-status-code.service';
+import { asyncHandler } from "../../middleware/async-handler.middleware";
+import { HTTP_STATUS } from "../../common/errors/error-codes";
+import { AppError } from "../../common/errors/app.error";
 
 /**
  * Controller Method to format response body from Service data
  * @param req Request Body
  * @param res Response Body
  */
-export const getCitationStatusCodes: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodes();
-        console.log('[citation-status-code.controller][getCitationStatusCodes][Success]: ', citationStatusCodes);
-        res.status(200).json(citationStatusCodes)
-    } catch (error) {
-        console.log('[citation-status-code.controller][getCitationStatusCodes][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch citation offense codes' });
-    }
-};
+export const getCitationStatusCodes: RequestHandler = asyncHandler(async (req, res) => {
+    const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodes();
+    return res.json(citationStatusCodes);
+});
 
 /**
  * Controller Method to format response body from Service data
  * @param req Request Body
  * @param res Response Body
  */
-export const getCitationStatusCodeById: RequestHandler = async (req: Request, res: Response) => {
+export const getCitationStatusCodeById: RequestHandler = asyncHandler(async (req, res) => {
     const status_code = parseInt(req.params.status_code as string, 10);
-    try {
-        const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodeById(status_code);
-        console.log('[citation-status-code.controller][getCitationStatusCodeById][Success]: ', citationStatusCodes[0]);
-        res.status(200).json(citationStatusCodes[0])
-    } catch (error) {
-        console.log('[citation-status-code.controller][getCitationStatusCodeById][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch citation offense codes' });
+    if (!status_code || isNaN(status_code)) {
+        throw new AppError("Invalid status_code parameter", HTTP_STATUS.BAD_REQUEST);
     }
-};
+
+    const citationStatusCodes = await citationStatusCodeService.getCitationStatusCodeById(status_code);
+    return res.json(citationStatusCodes);
+});
