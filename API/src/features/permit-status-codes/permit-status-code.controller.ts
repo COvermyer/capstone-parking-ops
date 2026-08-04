@@ -6,6 +6,8 @@
  */
 import { Request, RequestHandler, Response } from 'express';
 import * as permitStatusCodeService from './permit-status-code.service';
+import { HTTP_STATUS } from '../../common/errors/error-codes';
+import { AppError } from '../../common/errors/app.error';
 
 /**
  * Controller Method to format response body from Service data
@@ -13,14 +15,8 @@ import * as permitStatusCodeService from './permit-status-code.service';
  * @param res Response Body
  */
 export const getPermitStatusCodes: RequestHandler = async (req: Request, res: Response) => {
-    try {
-        const permitStatusCodes = await permitStatusCodeService.getPermitStatusCodes();
-        console.log('[permitStatusCodeController][getPermitStatusCodes][Success]: ', permitStatusCodes);
-        res.json(permitStatusCodes);
-    } catch (error) {
-        console.log('[permitStatusCodeController][getPermitStatusCodes][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch permit status codes' });
-    }
+    const permitStatusCodes = await permitStatusCodeService.getPermitStatusCodes();
+    return res.json(permitStatusCodes);
 };
 
 /**
@@ -30,12 +26,10 @@ export const getPermitStatusCodes: RequestHandler = async (req: Request, res: Re
  */
 export const getPermitStatusCodeById: RequestHandler = async (req: Request, res: Response) => {
     const status_code = req.params.status_code as string;
-    try {
-        const permitStatusCode = await permitStatusCodeService.getPermitStatusCode(status_code);
-        console.log('[permitStatusCodeController][getPermitStatusCodeById][Success]: ', permitStatusCode[0]);
-        res.json(permitStatusCode[0]); // Assuming the service returns an array, we send the first element
-    } catch (error) {
-        console.log('[permitStatusCodeController][getPermitStatusCodeById][Error]: ', error);
-        res.status(500).json({ error: 'Failed to fetch permit status code' });
+    if (!status_code) {
+        throw new AppError("Invalid status_code parameter", HTTP_STATUS.BAD_REQUEST);
     }
+
+    const permitStatusCode = await permitStatusCodeService.getPermitStatusCode(status_code);
+    return res.json(permitStatusCode);
 };

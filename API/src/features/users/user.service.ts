@@ -121,7 +121,7 @@ export const createUser = async (
     request: CreateUserRequest,
     connection?: PoolConnection
 ) : Promise<OkPacket> => {
-    // if a connection is provided, use it; otherwise, create a new transaction
+    // if a connection is provided as part of an existing transaction, use it; otherwise, create a new transaction
     if (connection) {
         return createUserInternal(request, connection);
     }
