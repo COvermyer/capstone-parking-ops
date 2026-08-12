@@ -7,12 +7,6 @@ interface UserSearchFilterProps {
 const UserSearchFilter = ({ onChange }: UserSearchFilterProps) => {
     const [role, setRole] = useState('');
 
-    const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = event.target.value;
-        setRole(value);
-        onChange(value);
-    };
-
     return(
         <div className='filter-container'>
             <label htmlFor='role-filter'>
