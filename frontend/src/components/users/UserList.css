@@ -1,0 +1,24 @@
+.user-list {
+    width: 100%;
+}
+
+.user-list-header,
+.user-list-row {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1.5fr 1fr;
+    align-items: center;
+    padding: 12px 16px;
+}
+
+.user-list-header {
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+}
+
+.user-list-row {
+    border-bottom: 1px solid #ddd
+}
+
+.user-list-row:hover {
+    background-color: #f5f5f5;
+}

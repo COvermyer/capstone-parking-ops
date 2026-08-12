@@ -1,6 +1,6 @@
 import api from './api';
-import { LoginRequest } from '../models/LoginRequest';
-import { LoginResponse } from '../models/LoginResponse';
+import { LoginRequest } from '../models/login-request.model';
+import { LoginResponse } from '../models/login-response.model';
 
 /**
  * Login method to be used for credential handling

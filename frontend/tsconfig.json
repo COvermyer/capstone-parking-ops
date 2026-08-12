@@ -3,5 +3,6 @@
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler" 
-  }
+  },
+  "include": ["src/**/*", "./src/declarations.d.ts"]
 }

@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import Default from "./pages/Default";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
+import Test from "./pages/Test";
 
 const App = () => {
 	return(
@@ -12,6 +13,10 @@ const App = () => {
 				<Route 
 					path="/"
 					element={<Default />}
+				/>
+				<Route 
+					path="/test"
+					element={<Test />}
 				/>
 				<Route 
 					path='/login'
