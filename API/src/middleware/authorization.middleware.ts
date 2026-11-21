@@ -1,6 +1,6 @@
 /**
  * Author: Caleb Overmyer
- * Filename: authorization.service.ts
+ * Filename: authorization.middleware.ts
  * Created: 2026-07-14
  * Last Modified: 2026-07-14
  * 

@@ -34,8 +34,10 @@ export const login = async (username: string, password: string) => {
         email: user.email
     }
     
-    // generate JWT token
-    const token = jwtService.generateToken(authenticatedUser);
+    // generate JWT token with a JwtPayload
+    const token = jwtService.generateToken({
+        user_id: authenticatedUser.user_id
+    });
 
     return({ 
         token,

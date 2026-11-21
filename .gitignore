@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# dev certificates
+certs/
+
 # Environment variables
 .env
 .env.local

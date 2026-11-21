@@ -5,11 +5,11 @@
  * Last Updated: 07/13/2026
  */
 import { Request } from "express";
-import { AuthenticatedUser } from "./authenticated-user";
+import { JwtPayload } from "../../types/jwt-payload";
 
 /**
- * This class enforces the need for an AuthenticatedUser before making a Request
+ * This class enforces the need for a JwtPayload before making a Request
  */
 export interface AuthenticatedRequest extends Request {
-    user?: AuthenticatedUser;
+    user?: JwtPayload;
 }

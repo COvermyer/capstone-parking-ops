@@ -7,7 +7,8 @@
  * This service determines whether or not a user has the required roles to access a resource
  */
 
-import { AuthenticatedUser } from "../features/auth/authenticated-user";
+// import { AuthenticatedUser } from "../features/auth/authenticated-user";
+import { JwtPayload } from '../types/jwt-payload';
 import * as UserRoleAssignmentService from '../features/user-role-assignments/user-role-assignment.service';
 import lookupService from "./lookup.service";
 
@@ -19,7 +20,7 @@ import lookupService from "./lookup.service";
  * @returns a Promise of a boolean if the user possesses the necessary roles
  */
 export const hasRoles = async (
-    user: AuthenticatedUser,
+    user: JwtPayload,
     requiredRoles: string[]
 ): Promise<boolean> => {
     
@@ -28,9 +29,10 @@ export const hasRoles = async (
     // convert role assignments to role codes
     const userRoles = roleAssignments.map(assignment =>
         lookupService.getRole(assignment.role_id)
-    );
+    )
+    .filter((role): role is string => typeof role === 'string');
 
-    console.log(`[AuthorizationService][hasRole] ${user.username} [${user.user_id}]: ${userRoles}`);
+    console.log(`[AuthorizationService][hasRole] UserId: ${user.user_id}, Roles: ${userRoles}`);
     
     // Return true if the user possesses any required Role
     return requiredRoles.some(role => 

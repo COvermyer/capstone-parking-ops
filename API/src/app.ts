@@ -4,11 +4,17 @@
  * Created: 07/06/2026
  * Last Updated: 07/13/2026
  */
+// external package imports
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import "dotenv/config";
 import cors from 'cors';
 import helmet from 'helmet';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+
+// internal imports
 import logger from './middleware/logger.middleware';
 // import { AuthenticatedRequest } from './types/authenticated-request';
 import lookupService from './services/lookup.service';
@@ -65,21 +71,40 @@ app.use(errorHandler);
  * The server listens on the specified port and logs relevant information to the console.
  */
 async function start() {
-    if (process.env.NODE_ENV === 'production') {
-        // Production-specific settings can be added here
-        console.warn('[app.ts][start][WARN] Running in production mode');
-    } else if (process.env.NODE_ENV === 'development') {
-        app.use(logger); // Use the logger middleware in development mode
-    } 
+    try {
+        if (process.env.NODE_ENV === 'production') {
+                // Production-specific settings can be added here
+                console.warn('[app.ts][start][WARN] Running in production mode');
+        } else if (process.env.NODE_ENV === 'development') {
+            app.use(logger); // Use the logger middleware in development mode
+        } 
 
-    app.listen(port, () => {
-        // console.log(`Server is running on port ${port}`);
-        console.log(`[app.ts][start][Info] Running at: http://localhost:${port}`);
-        console.log(`[app.ts][start][Info] Environment: ${process.env.NODE_ENV}`);
-    });
+        // Initialize the lookup service to populate static lookup tables in memory
+        await lookupService.initialize();
 
-    // Initialize the lookup service to populate static lookup tables in memory
-    await lookupService.initialize();
+        // Generate or retrieve a trusted localhost certificate
+        const tlsOptions = {
+            key: fs.readFileSync(
+                path.resolve(process.cwd(), 'certs/localhost-key.pem')
+            ),
+            cert: fs.readFileSync(
+                path.resolve(process.cwd(), 'certs/localhost.pem')
+            ),
+            minVersion: 'TLSv1.2' as const
+        }
+
+        // Create HTTPS server
+        const server = https.createServer(tlsOptions, app);
+
+        server.listen(port, () => {
+            // console.log(`Server is running on port ${port}`);
+            console.log(`[app.ts][start][Info] Running at: https://localhost:${port}`);
+            console.log(`[app.ts][start][Info] Environment: ${process.env.NODE_ENV}`);
+        });
+    } catch (error) {
+        console.log(`[app.ts][start][ERROR] Failed to start: ${error}`);
+        process.exit(1);
+    }
 }
 
 // Start the server

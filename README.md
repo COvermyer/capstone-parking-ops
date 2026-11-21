@@ -2,6 +2,8 @@
 
 ## TODO
 
+- Need to modify data base for account status and JWT token revokation
+
 - Finish user-credential services
 - Controller methods looking by field requires handling for 404 not found status.
 - static lookups

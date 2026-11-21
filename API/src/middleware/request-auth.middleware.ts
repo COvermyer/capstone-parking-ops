@@ -4,21 +4,21 @@
  * Created: 07/10/2026
  * Last Updated: 07/13/2026
  * 
- * This middle ware is designed to enforce role-based access. It starts
- * by checking the attached JWT token for authorization. If the auth fails, 
- * a 403 Unauthorized error is thrown. 
+ * This middle ware is designed to enforce authentication. It starts
+ * by checking the attached JWT token for authentication. If the auth fails, 
+ * a 401 Unauthorized error is thrown. 
  */
+
 import { Response, NextFunction } from 'express';
-// import jwt from 'jsonwebtoken';
 import * as jwtService from '../services/jwt.service';
 
 import { AuthenticatedRequest } from '../features/auth/authenticated-request';
 import { AppError } from '../common/errors/app.error';
 import { HTTP_STATUS } from '../common/errors/error-codes';
-import { AuthenticatedUser } from '../features/auth/authenticated-user';
+// import { AuthenticatedUser } from '../features/auth/authenticated-user';
 
 /**
- * 
+ *  Extracts bearer token from the Authorization header
  * @param authHeader The auth header attached to a request
  * @returns a string with the token if present (without decorators) or null if no token is attached
  */
@@ -26,12 +26,10 @@ function getBearerToken (authHeader? : string): string | null {
     if(!authHeader) 
         return null; // if no header is given, return null
 
-    const [scheme, token] = authHeader.split(" ");
-
-    if (scheme !== "Bearer")
-        return null; // If the first half of the scheme is in an unexpected format, return null
-
-    return token; // return only the token value
+    
+    // God regex makes me want to die this took like 30 min to figure out
+    const match = authHeader.match(/^Bearer\s+(\S+)$/i);
+    return match ? match[1] : null; // this logic is incomprehensible and took way too long to figure out DO NOT TOUCH
 } 
 
 /**
@@ -50,15 +48,26 @@ export const requireAuthentication = (
 
     if (!token) {
         // no token was attached to the request header
-        throw new AppError('Missing or invalid Authorization header.', HTTP_STATUS.BAD_REQUEST);
+        return next(
+            new AppError(
+                'Missing or invalid Authorization header',
+                HTTP_STATUS.UNAUTHORIZED
+            )
+        );
     }
     
-    const authenticatedUser: AuthenticatedUser = jwtService.verifyToken(token); // verify the token
-    if (!authenticatedUser) {
-        // if the token is invalid or expired, throw an error
-        throw new AppError('Invalid or expired token.', HTTP_STATUS.UNAUTHORIZED);
+    try {
+        // get the authenticated user as a JwtPayload
+        const authenticatedUser = jwtService.verifyToken(token);
+        req.user = authenticatedUser;
+        return next();
+    } catch (error) {
+        return next(
+            // token is expired or invalid
+            new AppError(
+                'Invalid or expired authentication token.',
+                HTTP_STATUS.UNAUTHORIZED
+            )
+        )
     }
-
-    req.user = authenticatedUser; // attach the authenticated user to the request body
-    next();
 };
