@@ -6,7 +6,7 @@
  */
 import { getExecutor, executeWithExecutor } from '../../services/mysql.connector';
 import { buildUpdateUserCredentialQuery, userCredentialQueries } from './user-credential.queries';
-import { HashedUpdateUserCredentialRequest, UserCredential } from './user-credential.model';
+import { UpdateUserCredentialRequest, UserCredential } from './user-credential.model';
 import { OkPacket, PoolConnection } from 'mysql';
 import { UpdateQuery } from '../../types/update-query.model';
 
@@ -68,7 +68,7 @@ export const readUserCredentialByUsername = async (username: string, connection?
  * @param connection 
  * @returns 
  */
-export const updateUserCredential = async (user_id: number, request: HashedUpdateUserCredentialRequest, connection?: PoolConnection) => {
+export const updateUserCredential = async (user_id: number, request: UpdateUserCredentialRequest, connection?: PoolConnection) => {
     const updateQuery: UpdateQuery = buildUpdateUserCredentialQuery(user_id, request);
     const executor = getExecutor(connection);
     return executeWithExecutor<OkPacket>(executor, updateQuery.sql, updateQuery.values);

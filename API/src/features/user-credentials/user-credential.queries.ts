@@ -5,7 +5,7 @@
  * Last Updated: 07/15/2026
  */
 import { UpdateQuery } from "../../types/update-query.model"
-import { HashedUpdateUserCredentialRequest } from "./user-credential.model"
+import { UpdateUserCredentialRequest } from "./user-credential.model"
 
 export const userCredentialQueries = {
     getAllUserCredentials: `SELECT * FROM user_credentials;`,
@@ -18,7 +18,7 @@ export const userCredentialQueries = {
 
 export const buildUpdateUserCredentialQuery = (
     userId: number,
-    request: HashedUpdateUserCredentialRequest
+    request: UpdateUserCredentialRequest
 ) : UpdateQuery => {
     const setClauses: string[] = [];
     const values: unknown[] = [];
@@ -30,9 +30,9 @@ export const buildUpdateUserCredentialQuery = (
     }
 
     // Password Hash
-    if (request.new_password_hash !== undefined) {
+    if (request.password_hash !== undefined) {
         setClauses.push('password_hash = ?');
-        values.push(request.new_password_hash);
+        values.push(request.password_hash);
     }
 
     // User ID

@@ -131,6 +131,19 @@ export const createUser = async (
     })
 }
 
+/**
+ * Internal helper method to perform create operation for a user separately from transaction logic
+ * 
+ * Since this method requires a transaction, this allows it to be run as part of a previous transaction without
+ * having to open its own transaction, basically telling the previous transaction to perform these operations as part of
+ * the original transaction.
+ * 
+ * I hate transactional logic
+ * 
+ * @param request 
+ * @param connection 
+ * @returns 
+ */
 const createUserInternal = async (
     request: CreateUserRequest,
     connection: PoolConnection
@@ -159,12 +172,7 @@ const createUserInternal = async (
         throw new AppError("Failed to create user", HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
     // handle user-credentials
-    const passwordHash = await passwordService.hashPassword(request.password);
-    await userCredentialService.createUserCredential({
-        user_id: userId,
-        username: request.username,
-        password_hash: passwordHash
-    }, connection);
+    await userCredentialService.createUserCredential(userId, request.username, request.password, connection);
     // handle role assignments
     for (const role of user.roles) {
         let roleId = lookupService.getRoleId(role);
@@ -208,3 +216,5 @@ export const deleteUser = async (user_id: number, connection?: PoolConnection) :
     }
     return await userDAO.deleteUser(user_id, connection);
 };
+
+// const deleteUserInternal = // TODO: Add transaction logic to delete user for credentials

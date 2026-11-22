@@ -2,7 +2,6 @@
  * Author: Caleb Overmyer
  * Filename: user-role-credential.model.ts
  * Created: 07/10/2026
- * Last Updated: 07/10/2026
  */
 export interface UserCredential {
     user_id: number;
@@ -10,20 +9,21 @@ export interface UserCredential {
     password_hash: string;
 };
 
-export interface CreateUserCredentialRequest {
-    user_id: number;
-    username: string;
-    password: string;
-}
-
+/**
+ * Used by query builder to dynamically build the update query
+ */
 export interface UpdateUserCredentialRequest {
-    current_password: string;
-    
+    user_id: number;
     username?: string;
-    new_password?: string;
+    password_hash?: string;
 }
 
-export interface HashedUpdateUserCredentialRequest {
-    username?: string;
-    new_password_hash?: string;
-}
+/**
+ * Service-level update request model - used by service for validating if the current password is valid before
+ * Proceeding with the update - ID is gathered from the JWT identity on controller layer
+ */
+export interface UpdateAuthenticatedUserCredentialRequest {
+    current_password: string;
+    username?: string,
+    new_password?: string;
+};
