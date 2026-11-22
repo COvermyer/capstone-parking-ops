@@ -11,4 +11,12 @@ export interface CitationOffenseCode {
     charge: number;
     appealable: boolean;
     created: string;
+};
+
+export interface UpdateCitationOffenseCodeRequest {
+    offense_code_id: number;
+    offense_code?: string;
+    offense_name?: string;
+    charge?: number;
+    appealable?: boolean;
 }

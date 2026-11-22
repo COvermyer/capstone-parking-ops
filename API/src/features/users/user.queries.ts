@@ -67,6 +67,9 @@ export const buildUpdateUserQuery = (
         values.push(request.phone_number);
     }
 
+    // error check
+    if (setClauses.length === 0) throw new Error('Empty Update query');
+
     // user_id
     values.push(userId);
 
