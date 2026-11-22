@@ -21,7 +21,7 @@ import { UpdateQuery } from '../../types/update-query.model';
  */
 export const createUserCredential = async (credential: UserCredential, connection?: PoolConnection) => {
     const executor = getExecutor(connection);
-    return executeWithExecutor<OkPacket>(executor, userCredentialQueries.addUserCredential, [credential.user_id, credential.username, credential.password_hash]);
+    return executeWithExecutor<OkPacket>(executor, userCredentialQueries.createUserCredential, [credential.user_id, credential.username, credential.password_hash]);
 }
 
 

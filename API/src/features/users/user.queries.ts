@@ -11,13 +11,21 @@ import { UpdateUserRequest } from "./user.model";
  * Defines static queries for the `users` table
  */
 export const userQueries = {
+    // Create
+    createUser: `INSERT INTO users (company_id, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?);`,
+
+    // Read
     getAllUsers: `SELECT * FROM users;`,
     getUsersPaginated: `SELECT * FROM users ORDER BY user_id ASC LIMIT ? OFFSET ?`,
     getUserById: `SELECT * FROM users WHERE user_id = ?;`,
     getUserByUsername: `SELECT * FROM users u JOIN user_credentials c ON u.user_id = c.user_id WHERE c.username = ?;`,
     getUserByCompanyId: `SELECT * FROM users WHERE company_id = ?`,
-    createUser: `INSERT INTO users (company_id, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?);`,
+    
+    // Update
+    // Replaced by query builder
     // updateUser: `UPDATE users SET company_id = ?, first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE user_id = ?;`,
+
+    // Delete
     deleteUserByUserId: `DELETE FROM users WHERE user_id = ?;`
 };
 

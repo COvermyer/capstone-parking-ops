@@ -5,6 +5,13 @@
  * Last Updated: 07/10/2026
  */
 export const appealStatusCodeQueries = {
+    // Create
+
+    // Read
     getAppealStatusCodes: `SELECT * FROM appeal_status_codes;`,
     getAppealStatusCodeById: `SELECT * FROM appeal_status_codes WHERE appeal_status_code = ?;`,
+
+    // Update
+
+    // Delete
 }

@@ -1,10 +1,17 @@
 export const vehicleQueries = {
+    // Create
+    createVehicle: ``,
+
+    // Read
     getAllVehicles: ``,
     getVehiclesByUserId: ``,
     getVehiclesById: ``,
     getVehiclesByPlate: ``,
     getVehiclesByVin: ``,
-    createVehicle: ``,
+
+    // Update
     updateVehicle: ``,
+
+    // Delete
     deleteVehicle: ``,
 };

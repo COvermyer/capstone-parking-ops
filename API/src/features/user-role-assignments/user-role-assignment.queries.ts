@@ -6,10 +6,18 @@
  */
 
 export const userRoleAssignmentQueries = {
+    // Create
+    createUserRoleAssignment: `INSERT INTO user_role_assignments (user_id, role_id) VALUES (?, ?);`,
+
+    // Read
     getAllUserRoleAssignments: `SELECT * FROM user_role_assignments;`,
     getUserRoleAssignmentByUserId: `SELECT * FROM user_role_assignments WHERE user_id = ?;`,
     getUserRoleAssignmentsByRoleId: `SELECT * FROM user_role_assignments WHERE role_id = ?;`,
-    createUserRoleAssignment: `INSERT INTO user_role_assignments (user_id, role_id) VALUES (?, ?);`,
+    
+    // Update
+    // We will never update a role assignment, only add or delete
+
+    // Delete
     deleteRoleFromUser: `DELETE FROM user_role_assignments WHERE user_id = ? AND role_id = ?;`,
     deleteAllRolesFromUserById: `DELETE FROM user_role_assignments WHERE user_id = ?;`,
 }

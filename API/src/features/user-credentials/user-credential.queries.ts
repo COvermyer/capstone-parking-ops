@@ -8,10 +8,10 @@ import { UpdateQuery } from "../../types/update-query.model"
 import { UpdateUserCredentialRequest } from "./user-credential.model"
 
 export const userCredentialQueries = {
+    createUserCredential: `INSERT INTO user_credentials (user_id, username, password_hash) VALUES (?, ?, ?);`,
     getAllUserCredentials: `SELECT * FROM user_credentials;`,
     getUserCredentialByUserId: `SELECT * FROM user_credentials WHERE user_id = ?;`,
     getUserCredentialByUsername: `SELECT * FROM user_credentials WHERE username = ?;`,
-    addUserCredential: `INSERT INTO user_credentials (user_id, username, password_hash) VALUES (?, ?, ?);`,
     // updateUserCredential: `UPDATE user_credentials SET username = ?, password_hash = ? WHERE user_id = ?;`,
     deleteUserCredential: `DELETE FROM user_credentials WHERE user_id = ?;`,
 }

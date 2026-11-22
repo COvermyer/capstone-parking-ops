@@ -5,6 +5,13 @@
  * Last Updated: 07/10/2026
  */
 export const permitStatusCodeQueries = {
+    // Create
+
+    // Read
     getAllPermitStatusCodes: `SELECT * FROM permit_status_codes;`,
     getPermitStatusCodeById: `SELECT * FROM permit_status_codes WHERE status_code = ?;`,
+
+    // Update
+
+    // Delete
 }
